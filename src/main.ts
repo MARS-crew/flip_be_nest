@@ -7,12 +7,12 @@ async function bootstrap() {
   const logger = new Logger();
   const app = await NestFactory.create(AppModule);
 
-  const { port } = config.get('server');
-  const serverPort = port || 3000;
+  const serverConfig: { port: string } = config.get('server');
+  const port = serverConfig.port || 3000;
 
-  await app.listen(serverPort);
+  await app.listen(port);
 
   logger.log(`profile : ${process.env.NODE_ENV || 'development'}`);
-  logger.log(`Application running on port : ${serverPort}`);
+  logger.log(`Application running on port : ${port}`);
 }
 bootstrap();
