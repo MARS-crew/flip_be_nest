@@ -25,4 +25,8 @@ export class SignUpRequest {
     },
   )
   passwordCheck: string;
+
+  validate(): boolean {
+    return this.password === this.passwordCheck;
+  }
 }
