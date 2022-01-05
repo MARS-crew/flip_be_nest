@@ -1,0 +1,11 @@
+db:
+  type: postgres
+  host: localhost
+  port: 5432
+  username: postgres
+  password: qwer1234
+  database: mars_flip
+  synchronize: true
+
+jwt:
+  secret: Secret-key-dev
