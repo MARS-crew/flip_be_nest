@@ -1,5 +1,6 @@
 import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { LoginRequest } from './dto/login.request';
 import { SignUpRequest } from './dto/sign-up.request';
 import { TokenResponse } from './dto/token.response';
 
@@ -12,5 +13,12 @@ export class AuthController {
     @Body(ValidationPipe) signUpRequest: SignUpRequest,
   ): Promise<TokenResponse> {
     return this.authService.signUp(signUpRequest);
+  }
+
+  @Post('/login')
+  async login(
+    @Body(ValidationPipe) loginRequest: LoginRequest,
+  ): Promise<TokenResponse> {
+    return this.authService.login(loginRequest);
   }
 }
