@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest } from './dto/login.request';
 import { SignUpRequest } from './dto/sign-up.request';
@@ -18,10 +12,6 @@ export class AuthController {
   async signUp(
     @Body(ValidationPipe) signUpRequest: SignUpRequest,
   ): Promise<TokenResponse> {
-    if (!signUpRequest.validate)
-      throw new BadRequestException(
-        'password and passwordCheck are not the same.',
-      );
     return this.authService.signUp(signUpRequest);
   }
 
