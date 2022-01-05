@@ -1,16 +1,9 @@
-import {
-  IsEmail,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsString, Matches, MaxLength } from 'class-validator';
 
 export class SignUpRequest {
   @IsEmail()
-  @MinLength(4)
-  @MaxLength(20)
   email: string;
+
   @IsString()
   @MaxLength(20)
   @Matches(
@@ -21,6 +14,7 @@ export class SignUpRequest {
     },
   )
   password: string;
+
   @IsString()
   @MaxLength(20)
   @Matches(
