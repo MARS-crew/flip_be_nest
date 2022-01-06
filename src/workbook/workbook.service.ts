@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
+import { WorkbookListResponse } from './dto/workbook-list.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { Workbook } from './entities/workbook.entity';
 import { WorkbookRepository } from './workbook.repository';
@@ -23,9 +24,17 @@ export class WorkbookService {
     return new WorkbookResponse(newWorkbook);
   }
 
-  // findAll() {
-  //   return `This action returns all workbook`;
-  // }
+  async findAll(): Promise<WorkbookListResponse> {
+    const findAllWorkbook = await this.workbookRepository.find({
+      relations: ['user'],
+    });
+
+    return new WorkbookListResponse(
+      findAllWorkbook.map((workbook) => {
+        return new WorkbookResponse(workbook);
+      }),
+    );
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} workbook`;

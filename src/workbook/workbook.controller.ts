@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UseGuards,
   ValidationPipe,
@@ -9,6 +10,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
+import { WorkbookListResponse } from './dto/workbook-list.response';
+import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookService } from './workbook.service';
 
 @Controller('api/v1/workbooks')
@@ -20,14 +23,14 @@ export class WorkbookController {
   create(
     @Body(ValidationPipe) createWorkbookDto: CreateWorkbookRequest,
     @GetUser() user: User,
-  ) {
+  ): Promise<WorkbookResponse> {
     return this.workbookService.create(user, createWorkbookDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.workbookService.findAll();
-  // }
+  @Get()
+  findAll(): Promise<WorkbookListResponse> {
+    return this.workbookService.findAll();
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
