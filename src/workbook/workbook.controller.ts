@@ -22,6 +22,7 @@ import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
 import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
+import { WorkbookDetailResponse } from './dto/workbook-detail.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookService } from './workbook.service';
 
@@ -48,7 +49,7 @@ export class WorkbookController {
   deleteCard(
     @Param('cardId', ParseIntPipe) cardId: number,
     @GetUser() user: User,
-  ) {
+  ): Promise<void> {
     return this.workbookService.deleteWorkBookCard(user, cardId);
   }
 
@@ -58,7 +59,7 @@ export class WorkbookController {
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
     @Body(ValidationPipe) createWorkBookCardRequest: CreateWorkBookCardRequest,
-  ) {
+  ): Promise<WorkbookDetailResponse> {
     return this.workbookService.createWorkBookCard(
       user,
       workbookId,
@@ -116,7 +117,7 @@ export class WorkbookController {
   remove(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
-  ) {
+  ): Promise<void> {
     return this.workbookService.remove(user, workbookId);
   }
 }
