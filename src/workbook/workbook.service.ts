@@ -147,15 +147,13 @@ export class WorkbookService {
     cardId: number,
     updateWorkBookCardRequest: UpdateWorkBookCardRequest,
   ): Promise<WorkbookCardResponse> {
-    // const workbook = await this.workbookRepository.findOne(
-    //   { id: workbookId, user },
-    //   { relations: ['user', 'cards'] },
-    // );
     const workbookCard = await WorkbookCard.findOne(
       {
         id: cardId,
         workbook: {
-          user,
+          user: {
+            id: user.id,
+          },
         },
       },
       { relations: ['workbook', 'workbook.user'] },
@@ -172,5 +170,27 @@ export class WorkbookService {
     await workbookCard.save();
 
     return new WorkbookCardResponse(workbookCard);
+  }
+
+  async deleteWorkBookCard(user: User, cardId: number): Promise<void> {
+    const workbookCard = await WorkbookCard.findOne(
+      {
+        id: cardId,
+        workbook: {
+          user: {
+            id: user.id,
+          },
+        },
+      },
+      { relations: ['workbook', 'workbook.user'] },
+    );
+
+    if (!workbookCard) {
+      throw new NotFoundException(
+        `해당 문제집 카드를 찾을 수 없습니다. with id : ${cardId}`,
+      );
+    }
+
+    await WorkbookCard.delete({ id: workbookCard.id });
   }
 }

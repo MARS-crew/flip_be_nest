@@ -44,6 +44,15 @@ export class WorkbookController {
   }
 
   @UseGuards(AuthGuard())
+  @Delete('/cards/:cardId')
+  deleteCard(
+    @Param('cardId', ParseIntPipe) cardId: number,
+    @GetUser() user: User,
+  ) {
+    return this.workbookService.deleteWorkBookCard(user, cardId);
+  }
+
+  @UseGuards(AuthGuard())
   @Post('/:workbookId/cards')
   createCards(
     @Param('workbookId', ParseIntPipe) workbookId: number,
