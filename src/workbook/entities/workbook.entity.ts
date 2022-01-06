@@ -16,4 +16,8 @@ export class Workbook extends BaseTimeEntity {
 
   @ManyToOne((type) => User)
   user: User;
+
+  updateInfo({ title }) {
+    this.title = title;
+  }
 }

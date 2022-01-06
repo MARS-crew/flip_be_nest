@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -17,6 +18,7 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
+import { UpdateWorkbookRequest } from './dto/update-workbook.request';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookService } from './workbook.service';
 
@@ -49,13 +51,15 @@ export class WorkbookController {
     return this.workbookService.findOne(workbookId);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id', ParseIntPipe) id: string,
-  //   @Body() updateWorkbookDto: UpdateWorkbookRequest,
-  // ) {
-  //   return this.workbookService.update(+id, updateWorkbookDto);
-  // }
+  @Patch(':workbookId')
+  @UseGuards(AuthGuard())
+  update(
+    @Param('workbookId', ParseIntPipe) workbookId: number,
+    @Body(ValidationPipe) updateWorkbookRequest: UpdateWorkbookRequest,
+    @GetUser() user: User,
+  ): Promise<WorkbookResponse> {
+    return this.workbookService.update(user, workbookId, updateWorkbookRequest);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

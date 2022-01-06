@@ -12,8 +12,11 @@ export class WorkbookRepository extends Repository<Workbook> {
     const { title } = createWorkbookRequest;
 
     const newWorkbook = this.create({ user, title });
-    await newWorkbook.save();
 
-    return newWorkbook;
+    return await newWorkbook.save();
+  }
+
+  async findOneByWorkbookId(workbookId: number): Promise<Workbook> {
+    return await this.findOne({ id: workbookId }, { relations: ['user'] });
   }
 }
