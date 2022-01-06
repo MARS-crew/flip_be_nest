@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { WorkBookCard } from './workbook-card.entity';
+import { WorkbookCard } from './workbook-card.entity';
 
 @Entity({
   orderBy: {
@@ -21,13 +21,17 @@ export class Workbook extends BaseTimeEntity {
   @ManyToOne((type) => User)
   user: User;
 
-  @OneToMany((type) => WorkBookCard, (card) => card.workbook)
-  cards: WorkBookCard[];
+  @OneToMany((type) => WorkbookCard, (card) => card.workbook, { cascade: true })
+  cards: WorkbookCard[];
 
   @Column()
   title: string;
 
   updateInfo({ title }) {
     this.title = title;
+  }
+
+  addCard(card: WorkbookCard) {
+    this.cards.push(card);
   }
 }

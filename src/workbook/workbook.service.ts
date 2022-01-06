@@ -2,10 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { User } from 'src/auth/entities/user.entity';
+import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
 import { WorkbookDetailResponse } from './dto/workbook-detail.response';
 import { WorkbookResponse } from './dto/workbook.response';
+import { WorkbookCard } from './entities/workbook-card.entity';
 import { Workbook } from './entities/workbook.entity';
 import { WorkbookRepository } from './workbook.repository';
 
@@ -107,5 +109,34 @@ export class WorkbookService {
     };
 
     return response;
+  }
+
+  async createWorkBookCard(
+    user: User,
+    workbookId: number,
+    createWorkBookCardRequest: CreateWorkBookCardRequest,
+  ): Promise<WorkbookDetailResponse> {
+    const workbook = await this.workbookRepository.findOne(
+      { id: workbookId, user },
+      { relations: ['user', 'cards'] },
+    );
+
+    if (!workbook) {
+      throw new NotFoundException(
+        `해당 문제집을 찾을 수 없습니다. with id : ${workbookId}`,
+      );
+    }
+
+    const { question, result } = createWorkBookCardRequest;
+
+    const card = await WorkbookCard.create({
+      question,
+      result,
+    });
+
+    workbook.addCard(card);
+    const savedWorkbook = await workbook.save();
+
+    return new WorkbookDetailResponse(savedWorkbook);
   }
 }

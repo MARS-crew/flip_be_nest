@@ -1,4 +1,4 @@
-import { WorkBookCard } from '../entities/workbook-card.entity';
+import { WorkbookCard } from '../entities/workbook-card.entity';
 
 export class WorkbookCardResponse {
   id: number;
@@ -7,7 +7,7 @@ export class WorkbookCardResponse {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(workbookCard: WorkBookCard) {
+  constructor(workbookCard: WorkbookCard) {
     this.id = workbookCard.id;
     this.question = workbookCard.question;
     this.result = workbookCard.result;

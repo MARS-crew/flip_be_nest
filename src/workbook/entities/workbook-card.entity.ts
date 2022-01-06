@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Workbook } from './workbook.entity';
 
 @Entity()
-export class WorkBookCard extends BaseTimeEntity {
+export class WorkbookCard extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
