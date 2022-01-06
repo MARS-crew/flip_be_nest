@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -61,8 +62,12 @@ export class WorkbookController {
     return this.workbookService.update(user, workbookId, updateWorkbookRequest);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.workbookService.remove(+id);
-  // }
+  @Delete(':workbookId')
+  @UseGuards(AuthGuard())
+  remove(
+    @Param('workbookId', ParseIntPipe) workbookId: number,
+    @GetUser() user: User,
+  ) {
+    return this.workbookService.remove(user, workbookId);
+  }
 }

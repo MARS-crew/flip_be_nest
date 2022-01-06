@@ -86,7 +86,16 @@ export class WorkbookService {
     return new WorkbookResponse(savedWorkbook);
   }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} workbook`;
-  // }
+  async remove(user: User, workbookId: number): Promise<void> {
+    const result = await this.workbookRepository.delete({
+      id: workbookId,
+      user: { id: user.id },
+    });
+
+    if (!result.affected) {
+      throw new NotFoundException(
+        `해당 문제집을 찾을 수 없습니다. with id : ${workbookId}`,
+      );
+    }
+  }
 }
