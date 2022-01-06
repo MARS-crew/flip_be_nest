@@ -4,7 +4,9 @@ import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
+import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
+import { WorkbookCardResponse } from './dto/workbook-card.response';
 import { WorkbookDetailResponse } from './dto/workbook-detail.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookCard } from './entities/workbook-card.entity';
@@ -138,5 +140,37 @@ export class WorkbookService {
     const savedWorkbook = await workbook.save();
 
     return new WorkbookDetailResponse(savedWorkbook);
+  }
+
+  async updateWorkBookCard(
+    user: User,
+    cardId: number,
+    updateWorkBookCardRequest: UpdateWorkBookCardRequest,
+  ): Promise<WorkbookCardResponse> {
+    // const workbook = await this.workbookRepository.findOne(
+    //   { id: workbookId, user },
+    //   { relations: ['user', 'cards'] },
+    // );
+    const workbookCard = await WorkbookCard.findOne(
+      {
+        id: cardId,
+        workbook: {
+          user,
+        },
+      },
+      { relations: ['workbook', 'workbook.user'] },
+    );
+
+    if (!workbookCard) {
+      throw new NotFoundException(
+        `해당 문제집 카드를 찾을 수 없습니다. with id : ${cardId}`,
+      );
+    }
+    const { question, result } = updateWorkBookCardRequest;
+
+    workbookCard.updateInfo({ question, result });
+    await workbookCard.save();
+
+    return new WorkbookCardResponse(workbookCard);
   }
 }

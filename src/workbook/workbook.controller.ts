@@ -20,6 +20,7 @@ import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
+import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookService } from './workbook.service';
@@ -27,6 +28,20 @@ import { WorkbookService } from './workbook.service';
 @Controller('api/v1/workbooks')
 export class WorkbookController {
   constructor(private readonly workbookService: WorkbookService) {}
+
+  @UseGuards(AuthGuard())
+  @Patch('/cards/:cardId')
+  updateCard(
+    @Param('cardId', ParseIntPipe) cardId: number,
+    @GetUser() user: User,
+    @Body(ValidationPipe) updateWorkBookCardRequest: UpdateWorkBookCardRequest,
+  ) {
+    return this.workbookService.updateWorkBookCard(
+      user,
+      cardId,
+      updateWorkBookCardRequest,
+    );
+  }
 
   @UseGuards(AuthGuard())
   @Post('/:workbookId/cards')
