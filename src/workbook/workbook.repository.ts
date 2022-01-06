@@ -1,3 +1,8 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { User } from 'src/auth/entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
@@ -18,5 +23,15 @@ export class WorkbookRepository extends Repository<Workbook> {
 
   async findOneByWorkbookId(workbookId: number): Promise<Workbook> {
     return await this.findOne({ id: workbookId }, { relations: ['user'] });
+  }
+
+  async findAllWorkbook(
+    pagingOptions: IPaginationOptions,
+  ): Promise<Pagination<Workbook>> {
+    const queryBuilder = this.createQueryBuilder('workbook')
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .orderBy('workbook.createdAt');
+
+    return await paginate<Workbook>(queryBuilder, pagingOptions);
   }
 }

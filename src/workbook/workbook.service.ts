@@ -4,11 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
@@ -36,13 +32,7 @@ export class WorkbookService {
   async findAll(
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<WorkbookResponse>> {
-    const queryBuilder = this.workbookRepository
-      .createQueryBuilder('workbook')
-      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
-      .orderBy('workbook.createdAt');
-
-    const pageInfo: Pagination<Workbook> = await paginate<Workbook>(
-      queryBuilder,
+    const pageInfo = await this.workbookRepository.findAllWorkbook(
       pagingOptions,
     );
 
@@ -55,10 +45,15 @@ export class WorkbookService {
   }
 
   async findOne(workbookId: number): Promise<WorkbookResponse> {
-    const workbook = await this.workbookRepository.findOne(
-      { id: workbookId },
-      { relations: ['user'] },
+    const workbook = await this.workbookRepository.findOneByWorkbookId(
+      workbookId,
     );
+
+    if (workbook) {
+      throw new NotFoundException(
+        `해당 문제집을 찾을 수 없습니다. with id : ${workbookId}`,
+      );
+    }
 
     return new WorkbookResponse(workbook);
   }
@@ -68,9 +63,8 @@ export class WorkbookService {
     workbookId: number,
     updateWorkbookRequest: UpdateWorkbookRequest,
   ): Promise<WorkbookResponse> {
-    const workbook = await this.workbookRepository.findOne(
-      { id: workbookId },
-      { relations: ['user'] },
+    const workbook = await this.workbookRepository.findOneByWorkbookId(
+      workbookId,
     );
 
     if (!workbook) {
