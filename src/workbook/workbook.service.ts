@@ -88,4 +88,22 @@ export class WorkbookService {
       );
     }
   }
+
+  async me(
+    user: User,
+    paginOPtions: IPaginationOptions,
+  ): Promise<Pagination<WorkbookResponse>> {
+    const pageInfo: Pagination<Workbook> =
+      await this.workbookRepository.findAllWorkbookByUserId(
+        user.id,
+        paginOPtions,
+      );
+
+    const response: Pagination<WorkbookResponse> = {
+      ...pageInfo,
+      items: pageInfo.items.map((workbook) => new WorkbookResponse(workbook)),
+    };
+
+    return response;
+  }
 }

@@ -34,4 +34,22 @@ export class WorkbookRepository extends Repository<Workbook> {
 
     return await paginate<Workbook>(queryBuilder, pagingOptions);
   }
+
+  async findAllWorkbookByUserId(
+    userId: number,
+    pagingOptions: IPaginationOptions,
+  ): Promise<Pagination<Workbook>> {
+    const queryBuilder = this.createQueryBuilder('workbook')
+      .innerJoinAndSelect(
+        'workbook.user',
+        'user',
+        'workbook.userId = :userId',
+        {
+          userId,
+        },
+      )
+      .orderBy('workbook.createdAt');
+
+    return await paginate<Workbook>(queryBuilder, pagingOptions);
+  }
 }

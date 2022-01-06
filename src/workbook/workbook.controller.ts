@@ -27,6 +27,16 @@ import { WorkbookService } from './workbook.service';
 export class WorkbookController {
   constructor(private readonly workbookService: WorkbookService) {}
 
+  @Get('/me')
+  @UseGuards(AuthGuard())
+  me(
+    @GetUser() user: User,
+    @Query('page', new DefaultValuePipe(1)) page = 1,
+    @Query('limit', new DefaultValuePipe(10)) limit = 10,
+  ): Promise<Pagination<WorkbookResponse>> {
+    return this.workbookService.me(user, { page, limit });
+  }
+
   @Post()
   @UseGuards(AuthGuard())
   @HttpCode(HttpStatus.CREATED)
