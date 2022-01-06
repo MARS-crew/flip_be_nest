@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { typeORMConfig } from './config/typeorm.config';
+import { typeORMConfig } from './common/config/typeorm.config';
 import { WorkbookModule } from './workbook/workbook.module';
 
 @Module({

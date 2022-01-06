@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
-import { WorkbookListResponse } from './dto/workbook-list.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { Workbook } from './entities/workbook.entity';
 import { WorkbookRepository } from './workbook.repository';
@@ -24,16 +28,25 @@ export class WorkbookService {
     return new WorkbookResponse(newWorkbook);
   }
 
-  async findAll(): Promise<WorkbookListResponse> {
-    const findAllWorkbook = await this.workbookRepository.find({
-      relations: ['user'],
-    });
+  async findAll(
+    pagingOptions: IPaginationOptions,
+  ): Promise<Pagination<WorkbookResponse>> {
+    const queryBuilder = this.workbookRepository
+      .createQueryBuilder('workbook')
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .orderBy('workbook.createdAt');
 
-    return new WorkbookListResponse(
-      findAllWorkbook.map((workbook) => {
-        return new WorkbookResponse(workbook);
-      }),
+    const pageInfo: Pagination<Workbook> = await paginate<Workbook>(
+      queryBuilder,
+      pagingOptions,
     );
+
+    const response: Pagination<WorkbookResponse> = {
+      ...pageInfo,
+      items: pageInfo.items.map((workbook) => new WorkbookResponse(workbook)),
+    };
+
+    return response;
   }
 
   // findOne(id: number) {

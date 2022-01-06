@@ -1,16 +1,19 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
+  ParseIntPipe,
   Post,
+  Query,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
-import { WorkbookListResponse } from './dto/workbook-list.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookService } from './workbook.service';
 
@@ -28,8 +31,11 @@ export class WorkbookController {
   }
 
   @Get()
-  findAll(): Promise<WorkbookListResponse> {
-    return this.workbookService.findAll();
+  findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<WorkbookResponse>> {
+    return this.workbookService.findAll({ page, limit });
   }
 
   // @Get(':id')
