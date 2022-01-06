@@ -1,0 +1,17 @@
+import { WorkBookCard } from '../entities/workbook-card.entity';
+
+export class WorkbookCardResponse {
+  id: number;
+  question: string;
+  result: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(workbookCard: WorkBookCard) {
+    this.id = workbookCard.id;
+    this.question = workbookCard.question;
+    this.result = workbookCard.result;
+    this.createdAt = workbookCard.createdAt;
+    this.updatedAt = workbookCard.updatedAt;
+  }
+}
