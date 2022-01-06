@@ -3,6 +3,8 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -24,6 +26,7 @@ export class WorkbookController {
 
   @Post()
   @UseGuards(AuthGuard())
+  @HttpCode(HttpStatus.CREATED)
   create(
     @Body(ValidationPipe) createWorkbookDto: CreateWorkbookRequest,
     @GetUser() user: User,
