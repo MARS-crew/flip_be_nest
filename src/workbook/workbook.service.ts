@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { User } from 'src/auth/entities/user.entity';
@@ -67,15 +63,9 @@ export class WorkbookService {
       workbookId,
     );
 
-    if (!workbook) {
+    if (!workbook || workbook.user.id !== user.id) {
       throw new NotFoundException(
         `해당 문제집을 찾을 수 없습니다. with id : ${workbookId}`,
-      );
-    }
-
-    if (workbook.user.id !== user.id) {
-      throw new ForbiddenException(
-        `해당 문제집을 수정할 수 없습니다. with id : ${workbookId}`,
       );
     }
 
