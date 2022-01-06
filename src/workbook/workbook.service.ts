@@ -49,9 +49,14 @@ export class WorkbookService {
     return response;
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} workbook`;
-  // }
+  async findOne(workbookId: number): Promise<WorkbookResponse> {
+    const workbook = await this.workbookRepository.findOne(
+      { id: workbookId },
+      { relations: ['user'] },
+    );
+
+    return new WorkbookResponse(workbook);
+  }
 
   // update(id: number, updateWorkbookDto: UpdateWorkbookRequest) {
   //   return `This action updates a #${id} workbook`;

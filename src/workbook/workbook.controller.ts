@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -38,10 +39,12 @@ export class WorkbookController {
     return this.workbookService.findAll({ page, limit });
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.workbookService.findOne(+id);
-  // }
+  @Get(':workbookId')
+  findOne(
+    @Param('workbookId', ParseIntPipe) workbookId: number,
+  ): Promise<WorkbookResponse> {
+    return this.workbookService.findOne(workbookId);
+  }
 
   // @Patch(':id')
   // update(
