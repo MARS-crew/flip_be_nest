@@ -27,8 +27,8 @@ import { WorkbookService } from './workbook.service';
 export class WorkbookController {
   constructor(private readonly workbookService: WorkbookService) {}
 
-  @Get('/me')
   @UseGuards(AuthGuard())
+  @Get('/me')
   me(
     @GetUser() user: User,
     @Query('page', new DefaultValuePipe(1)) page = 1,
@@ -37,9 +37,9 @@ export class WorkbookController {
     return this.workbookService.me(user, { page, limit });
   }
 
-  @Post()
   @UseGuards(AuthGuard())
   @HttpCode(HttpStatus.CREATED)
+  @Post()
   create(
     @Body(ValidationPipe) createWorkbookDto: CreateWorkbookRequest,
     @GetUser() user: User,
@@ -62,8 +62,8 @@ export class WorkbookController {
     return this.workbookService.findOne(workbookId);
   }
 
-  @Patch(':workbookId')
   @UseGuards(AuthGuard())
+  @Patch(':workbookId')
   update(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @Body(ValidationPipe) updateWorkbookRequest: UpdateWorkbookRequest,
@@ -72,8 +72,8 @@ export class WorkbookController {
     return this.workbookService.update(user, workbookId, updateWorkbookRequest);
   }
 
-  @Delete(':workbookId')
   @UseGuards(AuthGuard())
+  @Delete(':workbookId')
   remove(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
