@@ -30,6 +30,7 @@ export class WorkbookRepository extends Repository<Workbook> {
   ): Promise<Pagination<Workbook>> {
     const queryBuilder = this.createQueryBuilder('workbook')
       .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .leftJoinAndSelect('workbook.cards', 'workbookCard')
       .orderBy('workbook.createdAt');
 
     return await paginate<Workbook>(queryBuilder, pagingOptions);
@@ -48,6 +49,7 @@ export class WorkbookRepository extends Repository<Workbook> {
           userId,
         },
       )
+      .leftJoinAndSelect('workbook.cards', 'workbookCard')
       .orderBy('workbook.createdAt');
 
     return await paginate<Workbook>(queryBuilder, pagingOptions);

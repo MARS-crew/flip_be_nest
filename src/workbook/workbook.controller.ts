@@ -22,6 +22,7 @@ import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
 import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
+import { WorkbookCardResponse } from './dto/workbook-card.response';
 import { WorkbookDetailResponse } from './dto/workbook-detail.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookService } from './workbook.service';
@@ -36,7 +37,7 @@ export class WorkbookController {
     @Param('cardId', ParseIntPipe) cardId: number,
     @GetUser() user: User,
     @Body(ValidationPipe) updateWorkBookCardRequest: UpdateWorkBookCardRequest,
-  ) {
+  ): Promise<WorkbookCardResponse> {
     return this.workbookService.updateWorkBookCard(
       user,
       cardId,
@@ -73,7 +74,7 @@ export class WorkbookController {
     @GetUser() user: User,
     @Query('page', new DefaultValuePipe(1)) page = 1,
     @Query('limit', new DefaultValuePipe(10)) limit = 10,
-  ): Promise<Pagination<WorkbookResponse>> {
+  ): Promise<Pagination<WorkbookDetailResponse>> {
     return this.workbookService.me(user, { page, limit });
   }
 
@@ -91,14 +92,14 @@ export class WorkbookController {
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-  ): Promise<Pagination<WorkbookResponse>> {
+  ): Promise<Pagination<WorkbookDetailResponse>> {
     return this.workbookService.findAll({ page, limit });
   }
 
   @Get(':workbookId')
   findOne(
     @Param('workbookId', ParseIntPipe) workbookId: number,
-  ): Promise<WorkbookResponse> {
+  ): Promise<WorkbookDetailResponse> {
     return this.workbookService.findOne(workbookId);
   }
 
