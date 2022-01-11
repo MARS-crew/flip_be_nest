@@ -40,6 +40,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "sqlite3": "^5.0.2",
     "typeorm": "^0.2.41"
   },
   "devDependencies": {
@@ -73,7 +74,10 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
+    "modulePaths": [
+      "<rootDir>"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"

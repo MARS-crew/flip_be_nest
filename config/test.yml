@@ -1,0 +1,11 @@
+db:
+  type: sqlite
+  host:
+  port:
+  username:
+  password:
+  database: mars_flip
+  synchronize: true
+
+jwt:
+  secret: mars-flip-secret-key-dev-mars-flip-secret-key-dev-mars-flip-secret-key-dev
