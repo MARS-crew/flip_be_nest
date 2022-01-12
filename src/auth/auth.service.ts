@@ -34,7 +34,7 @@ export class AuthService {
       throw new NotFoundException(`Can't find user with email : ${email}`);
     }
 
-    if (!findUser.validatePassword(password)) {
+    if (!(await findUser.validatePassword(password))) {
       throw new UnauthorizedException('Invalid Password');
     }
 
