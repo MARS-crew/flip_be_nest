@@ -32,20 +32,22 @@ export class WorkbookService {
 
   async findAll(
     pagingOptions: IPaginationOptions,
-  ): Promise<Pagination<WorkbookResponse>> {
+  ): Promise<Pagination<WorkbookDetailResponse>> {
     const pageInfo = await this.workbookRepository.findAllWorkbook(
       pagingOptions,
     );
 
-    const response: Pagination<WorkbookResponse> = {
+    const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
-      items: pageInfo.items.map((workbook) => new WorkbookResponse(workbook)),
+      items: pageInfo.items.map(
+        (workbook) => new WorkbookDetailResponse(workbook),
+      ),
     };
 
     return response;
   }
 
-  async findOne(workbookId: number): Promise<WorkbookResponse> {
+  async findOne(workbookId: number): Promise<WorkbookDetailResponse> {
     const workbook = await this.workbookRepository.findOne(
       { id: workbookId },
       { relations: ['user', 'cards'] },
@@ -97,17 +99,19 @@ export class WorkbookService {
 
   async me(
     user: User,
-    paginOPtions: IPaginationOptions,
-  ): Promise<Pagination<WorkbookResponse>> {
+    paginOptions: IPaginationOptions,
+  ): Promise<Pagination<WorkbookDetailResponse>> {
     const pageInfo: Pagination<Workbook> =
       await this.workbookRepository.findAllWorkbookByUserId(
         user.id,
-        paginOPtions,
+        paginOptions,
       );
 
-    const response: Pagination<WorkbookResponse> = {
+    const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
-      items: pageInfo.items.map((workbook) => new WorkbookResponse(workbook)),
+      items: pageInfo.items.map(
+        (workbook) => new WorkbookDetailResponse(workbook),
+      ),
     };
 
     return response;
