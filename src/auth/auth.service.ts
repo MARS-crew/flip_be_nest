@@ -28,17 +28,21 @@ export class AuthService {
 
   async login(loginRequest: LoginRequest): Promise<TokenResponse> {
     const { email, password } = loginRequest;
-    const findUser = await this.userRepository.findOne({ email });
+    const findUser: User = await this.userRepository.findOne({ email });
 
     if (!findUser) {
       throw new NotFoundException(`Can't find user with email : ${email}`);
     }
 
-    if (!(await findUser.validatePassword(password))) {
+    const isValid: boolean = await findUser.validatePassword(password);
+
+    if (!isValid) {
       throw new UnauthorizedException('Invalid Password');
     }
 
-    const accessToken = await this.jwtService.sign({ email: findUser.email });
+    const accessToken: string = await this.jwtService.signAsync({
+      email: findUser.email,
+    });
 
     return new TokenResponse({ accessToken });
   }
