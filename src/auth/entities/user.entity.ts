@@ -1,9 +1,10 @@
+import { BaseTimeEntity } from '@/common/entity/base-time.entity';
 import * as bcrypt from 'bcrypt';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Profile } from './profile';
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,11 +17,14 @@ export class User extends BaseEntity {
   @Column(() => Profile)
   profile: Profile;
 
-  static async of(email: string, encodedPassword: string): Promise<User> {
+  static async of(payload: {
+    email: string;
+    encodedPassword: string;
+  }): Promise<User> {
     const user = new User();
-    user.email = email;
-    user.password = encodedPassword;
-    user.profile = await Profile.of(email, null);
+    user.email = payload.email;
+    user.password = payload.encodedPassword;
+    user.profile = await Profile.of(payload.email, null);
 
     return user;
   }
