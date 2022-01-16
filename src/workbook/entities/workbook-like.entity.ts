@@ -33,4 +33,8 @@ export class WorkbookLike extends BaseTimeEntity {
 
     return workbookLike;
   }
+
+  updateType(type: WorkbookLikeType) {
+    this.type = type;
+  }
 }

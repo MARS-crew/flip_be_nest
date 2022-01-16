@@ -208,16 +208,29 @@ export class WorkbookService {
   async likeByType(
     user: User,
     workbookId: number,
-    likeType: WorkbookLikeType,
-  ): Promise<WorkbookLike> {
-    this.workbookRepository.findOne(
-      {
-        id: workbookId,
-        likes: [],
-      },
-      { relations: ['workbook', 'workbook.likes'] },
+    type: WorkbookLikeType,
+  ): Promise<void> {
+    const workbook = await this.workbookRepository.findOneByWorkbookId(
+      workbookId,
     );
 
-    return;
+    if (!workbook) {
+      throw new NotFoundException(
+        `해당 문제집을 찾을 수 없습니다. with id : ${workbookId}`,
+      );
+    }
+
+    const workbookLike = await WorkbookLike.findOne({
+      userId: user.id,
+      workbook: workbook,
+    });
+
+    if (workbookLike) {
+      workbookLike.updateType(type);
+      workbookLike.save();
+    } else {
+      const newWorkbookLike = await WorkbookLike.of(type, user.id, workbook);
+      newWorkbookLike.save();
+    }
   }
 }
