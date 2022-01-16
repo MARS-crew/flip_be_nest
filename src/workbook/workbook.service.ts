@@ -10,6 +10,10 @@ import { WorkbookCardResponse } from './dto/workbook-card.response';
 import { WorkbookDetailResponse } from './dto/workbook-detail.response';
 import { WorkbookResponse } from './dto/workbook.response';
 import { WorkbookCard } from './entities/workbook-card.entity';
+import {
+  WorkbookLike,
+  WorkbookLikeType,
+} from './entities/workbook-like.entity';
 import { Workbook } from './entities/workbook.entity';
 import { WorkbookRepository } from './workbook.repository';
 
@@ -31,6 +35,7 @@ export class WorkbookService {
   }
 
   async findAll(
+    user: User,
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<WorkbookDetailResponse>> {
     const pageInfo = await this.workbookRepository.findAllWorkbook(
@@ -40,17 +45,19 @@ export class WorkbookService {
     const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
       items: pageInfo.items.map(
-        (workbook) => new WorkbookDetailResponse(workbook),
+        (workbook) => new WorkbookDetailResponse(workbook, user.id),
       ),
     };
 
     return response;
   }
 
-  async findOne(workbookId: number): Promise<WorkbookDetailResponse> {
-    const workbook = await this.workbookRepository.findOne(
-      { id: workbookId },
-      { relations: ['user', 'cards'] },
+  async findOne(
+    user: User,
+    workbookId: number,
+  ): Promise<WorkbookDetailResponse> {
+    const workbook = await this.workbookRepository.findOneByWorkbookId(
+      workbookId,
     );
 
     if (!workbook) {
@@ -59,7 +66,7 @@ export class WorkbookService {
       );
     }
 
-    return new WorkbookDetailResponse(workbook);
+    return new WorkbookDetailResponse(workbook, user.id);
   }
 
   async update(
@@ -110,7 +117,7 @@ export class WorkbookService {
     const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
       items: pageInfo.items.map(
-        (workbook) => new WorkbookDetailResponse(workbook),
+        (workbook) => new WorkbookDetailResponse(workbook, user.id),
       ),
     };
 
@@ -143,7 +150,7 @@ export class WorkbookService {
     workbook.addCard(card);
     const savedWorkbook = await workbook.save();
 
-    return new WorkbookDetailResponse(savedWorkbook);
+    return new WorkbookDetailResponse(savedWorkbook, user.id);
   }
 
   async updateWorkBookCard(
@@ -196,5 +203,21 @@ export class WorkbookService {
     }
 
     await WorkbookCard.delete({ id: workbookCard.id });
+  }
+
+  async likeByType(
+    user: User,
+    workbookId: number,
+    likeType: WorkbookLikeType,
+  ): Promise<WorkbookLike> {
+    this.workbookRepository.findOne(
+      {
+        id: workbookId,
+        likes: [],
+      },
+      { relations: ['workbook', 'workbook.likes'] },
+    );
+
+    return;
   }
 }

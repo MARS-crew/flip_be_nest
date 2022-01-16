@@ -22,7 +22,10 @@ export class WorkbookRepository extends Repository<Workbook> {
   }
 
   async findOneByWorkbookId(workbookId: number): Promise<Workbook> {
-    return await this.findOne({ id: workbookId }, { relations: ['user'] });
+    return await this.findOne(
+      { id: workbookId },
+      { relations: ['user', 'likes', 'cards'] },
+    );
   }
 
   async findAllWorkbook(
@@ -31,6 +34,7 @@ export class WorkbookRepository extends Repository<Workbook> {
     const queryBuilder = this.createQueryBuilder('workbook')
       .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
       .leftJoinAndSelect('workbook.cards', 'workbookCard')
+      .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .orderBy('workbook.createdAt', 'DESC');
 
     return await paginate<Workbook>(queryBuilder, pagingOptions);
@@ -50,6 +54,7 @@ export class WorkbookRepository extends Repository<Workbook> {
         },
       )
       .leftJoinAndSelect('workbook.cards', 'workbookCard')
+      .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .orderBy('workbook.createdAt', 'DESC');
 
     return await paginate<Workbook>(queryBuilder, pagingOptions);

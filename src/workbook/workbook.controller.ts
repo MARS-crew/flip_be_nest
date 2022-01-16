@@ -88,19 +88,23 @@ export class WorkbookController {
     return this.workbookService.create(user, createWorkbookDto);
   }
 
+  @UseGuards(AuthGuard())
   @Get()
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @GetUser() user: User,
   ): Promise<Pagination<WorkbookDetailResponse>> {
-    return this.workbookService.findAll({ page, limit });
+    return this.workbookService.findAll(user, { page, limit });
   }
 
+  @UseGuards(AuthGuard())
   @Get(':workbookId')
   findOne(
     @Param('workbookId', ParseIntPipe) workbookId: number,
+    @GetUser() user: User,
   ): Promise<WorkbookDetailResponse> {
-    return this.workbookService.findOne(workbookId);
+    return this.workbookService.findOne(user, workbookId);
   }
 
   @UseGuards(AuthGuard())
