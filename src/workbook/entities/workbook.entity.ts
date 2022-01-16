@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WorkbookCard } from './workbook-card.entity';
+import { WorkbookLike } from './workbook-like.entity';
 
 @Entity({
   orderBy: {
@@ -18,14 +19,17 @@ export class Workbook extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User)
-  user: User;
-
-  @OneToMany((type) => WorkbookCard, (card) => card.workbook, { cascade: true })
-  cards: WorkbookCard[];
-
   @Column()
   title: string;
+
+  @ManyToOne(() => User)
+  user: User;
+
+  @OneToMany(() => WorkbookLike, (like) => like.workbook, { cascade: true })
+  likes: WorkbookLike[];
+
+  @OneToMany(() => WorkbookCard, (card) => card.workbook, { cascade: true })
+  cards: WorkbookCard[];
 
   updateInfo({ title }) {
     this.title = title;

@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
   ValidationPipe,
@@ -21,6 +22,7 @@ import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
 import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
+import { UpdateWorkbookLikeRequest } from './dto/update-workbook-like-request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
 import { WorkbookCardResponse } from './dto/workbook-card.response';
 import { WorkbookDetailResponse } from './dto/workbook-detail.response';
@@ -88,19 +90,23 @@ export class WorkbookController {
     return this.workbookService.create(user, createWorkbookDto);
   }
 
+  @UseGuards(AuthGuard())
   @Get()
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @GetUser() user: User,
   ): Promise<Pagination<WorkbookDetailResponse>> {
-    return this.workbookService.findAll({ page, limit });
+    return this.workbookService.findAll(user, { page, limit });
   }
 
+  @UseGuards(AuthGuard())
   @Get(':workbookId')
   findOne(
     @Param('workbookId', ParseIntPipe) workbookId: number,
+    @GetUser() user: User,
   ): Promise<WorkbookDetailResponse> {
-    return this.workbookService.findOne(workbookId);
+    return this.workbookService.findOne(user, workbookId);
   }
 
   @UseGuards(AuthGuard())
@@ -120,5 +126,19 @@ export class WorkbookController {
     @GetUser() user: User,
   ): Promise<void> {
     return this.workbookService.remove(user, workbookId);
+  }
+
+  @UseGuards(AuthGuard())
+  @Put(':workbookId/like')
+  async like(
+    @Param('workbookId', ParseIntPipe) workbookId: number,
+    @GetUser() user: User,
+    @Body() updateWorkbookLikeRequest: UpdateWorkbookLikeRequest,
+  ) {
+    return this.workbookService.likeByType(
+      user,
+      workbookId,
+      updateWorkbookLikeRequest.type,
+    );
   }
 }
