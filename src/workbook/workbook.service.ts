@@ -225,12 +225,17 @@ export class WorkbookService {
       workbook: workbook,
     });
 
-    if (workbookLike) {
-      workbookLike.updateType(type);
-      workbookLike.save();
-    } else {
+    if (!workbookLike) {
       const newWorkbookLike = await WorkbookLike.of(type, user.id, workbook);
       newWorkbookLike.save();
+      return;
     }
+
+    if (workbookLike.type === type) {
+      workbookLike.remove();
+      return;
+    }
+    workbookLike.updateType(type);
+    workbookLike.save();
   }
 }

@@ -22,11 +22,11 @@ import { User } from 'src/auth/entities/user.entity';
 import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
 import { CreateWorkbookRequest } from './dto/create-workbook.request';
 import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
-import { UpdateWorkbookLikeRequest } from './dto/update-workbook-like-request';
 import { UpdateWorkbookRequest } from './dto/update-workbook.request';
 import { WorkbookCardResponse } from './dto/workbook-card.response';
 import { WorkbookDetailResponse } from './dto/workbook-detail.response';
 import { WorkbookResponse } from './dto/workbook.response';
+import { WorkbookLikeType } from './entities/workbook-like.entity';
 import { WorkbookService } from './workbook.service';
 
 @Controller('api/v1/workbooks')
@@ -133,12 +133,13 @@ export class WorkbookController {
   async like(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
-    @Body() updateWorkbookLikeRequest: UpdateWorkbookLikeRequest,
+    // @Body(ValidationPipe) updateWorkbookLikeRequest: UpdateWorkbookLikeRequest,
   ) {
     return this.workbookService.likeByType(
       user,
       workbookId,
-      updateWorkbookLikeRequest.type,
+      WorkbookLikeType.LIKE,
+      // updateWorkbookLikeRequest.type,
     );
   }
 }
