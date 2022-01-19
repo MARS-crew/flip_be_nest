@@ -1,6 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as config from 'config';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 const dbConfig: {
   type: any;
@@ -20,5 +19,4 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   database: dbConfig.database,
   entities: [__dirname + '../../../**/*.entity.{js,ts}'],
   synchronize: true,
-  namingStrategy: new SnakeNamingStrategy(),
 };

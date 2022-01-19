@@ -1,8 +1,8 @@
 db:
-  type: mariadb
-  host: database-mariadb-mars-flip-dev.crushi2l5fpc.ap-northeast-2.rds.amazonaws.com
-  port: 3306
-  username: mars_flip
+  type: postgres
+  host: database-2-instance-1.crushi2l5fpc.ap-northeast-2.rds.amazonaws.com
+  port: 5432
+  username: postgres
   password: mars00--
   database: mars_flip
   synchronize: true
