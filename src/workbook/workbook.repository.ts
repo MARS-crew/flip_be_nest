@@ -33,11 +33,21 @@ export class WorkbookRepository extends Repository<Workbook> {
   ): Promise<Pagination<Workbook>> {
     const queryBuilder = this.createQueryBuilder('workbook')
       .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
-      .leftJoinAndSelect('workbook.cards', 'workbookCard')
-      .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .orderBy('workbook.createdAt', 'DESC');
 
-    return await paginate<Workbook>(queryBuilder, pagingOptions);
+    const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
+
+    const idList = pageInfo.items.map((workbook) => workbook.id);
+
+    const result = await this.createQueryBuilder('workbook')
+      .whereInIds(idList)
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .orderBy('workbook.createdAt', 'DESC')
+      .leftJoinAndSelect('workbook.cards', 'workbookCard')
+      .leftJoinAndSelect('workbook.likes', 'workbookLike')
+      .getMany();
+
+    return { ...pageInfo, items: result };
   }
 
   async findAllWorkbookByUserId(
@@ -53,10 +63,20 @@ export class WorkbookRepository extends Repository<Workbook> {
           userId,
         },
       )
-      .leftJoinAndSelect('workbook.cards', 'workbookCard')
-      .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .orderBy('workbook.createdAt', 'DESC');
 
-    return await paginate<Workbook>(queryBuilder, pagingOptions);
+    const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
+
+    const idList = pageInfo.items.map((workbook) => workbook.id);
+
+    const result = await this.createQueryBuilder('workbook')
+      .whereInIds(idList)
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .orderBy('workbook.createdAt', 'DESC')
+      .leftJoinAndSelect('workbook.cards', 'workbookCard')
+      .leftJoinAndSelect('workbook.likes', 'workbookLike')
+      .getMany();
+
+    return { ...pageInfo, items: result };
   }
 }
