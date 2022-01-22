@@ -32,7 +32,7 @@ export class WorkbookRepository extends Repository<Workbook> {
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<Workbook>> {
     const queryBuilder = this.createQueryBuilder('workbook')
-      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
       .orderBy('workbook.createdAt', 'DESC');
 
     const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
@@ -41,7 +41,7 @@ export class WorkbookRepository extends Repository<Workbook> {
 
     const result = await this.createQueryBuilder('workbook')
       .whereInIds(idList)
-      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
       .orderBy('workbook.createdAt', 'DESC')
       .leftJoinAndSelect('workbook.cards', 'workbookCard')
       .leftJoinAndSelect('workbook.likes', 'workbookLike')
@@ -58,7 +58,7 @@ export class WorkbookRepository extends Repository<Workbook> {
       .innerJoinAndSelect(
         'workbook.user',
         'user',
-        'workbook.userId = :userId',
+        'workbook.user_id = :userId',
         {
           userId,
         },
@@ -71,7 +71,7 @@ export class WorkbookRepository extends Repository<Workbook> {
 
     const result = await this.createQueryBuilder('workbook')
       .whereInIds(idList)
-      .innerJoinAndSelect('workbook.user', 'user', 'workbook.userId = user.id')
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
       .orderBy('workbook.createdAt', 'DESC')
       .leftJoinAndSelect('workbook.cards', 'workbookCard')
       .leftJoinAndSelect('workbook.likes', 'workbookLike')

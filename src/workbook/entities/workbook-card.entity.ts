@@ -13,7 +13,7 @@ export class WorkbookCard extends BaseTimeEntity {
   @Column()
   question: string;
 
-  @Column()
+  @Column({ type: 'text' })
   result: string;
 
   updateInfo({ question, result }) {
