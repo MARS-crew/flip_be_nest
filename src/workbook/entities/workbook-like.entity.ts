@@ -18,7 +18,9 @@ export class WorkbookLike extends BaseTimeEntity {
   @Column()
   userId: number;
 
-  @ManyToOne(() => Workbook)
+  @ManyToOne(() => Workbook, (workbook) => workbook.likes, {
+    onDelete: 'CASCADE',
+  })
   workbook: Workbook;
 
   static async of(

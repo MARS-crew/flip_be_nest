@@ -7,7 +7,9 @@ export class WorkbookCard extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Workbook, (workbook) => workbook.cards)
+  @ManyToOne(() => Workbook, (workbook) => workbook.cards, {
+    onDelete: 'CASCADE',
+  })
   workbook: Workbook;
 
   @Column()
