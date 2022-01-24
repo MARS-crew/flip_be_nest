@@ -34,6 +34,16 @@ export class WorkbookController {
   constructor(private readonly workbookService: WorkbookService) {}
 
   @UseGuards(AuthGuard())
+  @Get('/top')
+  findAllMostLikesWorkbook(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @GetUser() user: User,
+  ): Promise<Pagination<WorkbookDetailResponse>> {
+    return this.workbookService.findAllMostLikesWorkbook(user, { page, limit });
+  }
+
+  @UseGuards(AuthGuard())
   @Patch('/cards/:cardId')
   updateCard(
     @Param('cardId', ParseIntPipe) cardId: number,

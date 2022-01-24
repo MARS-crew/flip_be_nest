@@ -79,4 +79,29 @@ export class WorkbookRepository extends Repository<Workbook> {
 
     return { ...pageInfo, items: result };
   }
+
+  async findAllMostLikesWorkbook(
+    pagingOptions: IPaginationOptions,
+  ): Promise<Pagination<Workbook>> {
+    const queryBuilder = this.createQueryBuilder('workbook')
+      .select('workbook.id')
+      .addSelect('COUNT(workbook.id) as count')
+      .leftJoin('workbook.likes', 'workbookLike')
+      .orderBy('workbook.createdAt', 'DESC')
+      .addGroupBy('workbook.id');
+
+    const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
+
+    const idList = pageInfo.items.map((workbook) => workbook.id);
+
+    const result = await this.createQueryBuilder('workbook')
+      .whereInIds(idList)
+      .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
+      .orderBy('workbook.createdAt', 'DESC')
+      .leftJoinAndSelect('workbook.cards', 'workbookCard')
+      .leftJoinAndSelect('workbook.likes', 'workbookLike')
+      .getMany();
+
+    return { ...pageInfo, items: result };
+  }
 }
