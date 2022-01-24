@@ -34,6 +34,24 @@ export class WorkbookService {
     return new WorkbookResponse(newWorkbook);
   }
 
+  async findAllMostLikesWorkbook(
+    user: User,
+    pagingOptions: IPaginationOptions,
+  ): Promise<Pagination<WorkbookDetailResponse>> {
+    const pageInfo = await this.workbookRepository.findAllMostLikesWorkbook(
+      pagingOptions,
+    );
+
+    const response: Pagination<WorkbookDetailResponse> = {
+      ...pageInfo,
+      items: pageInfo.items.map(
+        (workbook) => new WorkbookDetailResponse(workbook, user.id),
+      ),
+    };
+
+    return response;
+  }
+
   async findAll(
     user: User,
     pagingOptions: IPaginationOptions,
