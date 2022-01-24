@@ -85,10 +85,15 @@ export class WorkbookRepository extends Repository<Workbook> {
   ): Promise<Pagination<Workbook>> {
     const queryBuilder = this.createQueryBuilder('workbook')
       .select('workbook.id')
-      .addSelect('COUNT(workbook.id) as count')
-      .leftJoin('workbook.likes', 'workbookLike')
+      .addSelect('COUNT(workbookLike.id) as like_count')
+      .leftJoin(
+        'workbook.likes',
+        'workbookLike',
+        'workbook.id = workbookLike.workbook_id',
+      )
       .orderBy('workbook.createdAt', 'DESC')
-      .addGroupBy('workbook.id');
+      .addGroupBy('workbook.id')
+      .having('like_count > 0');
 
     const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
 
@@ -102,7 +107,11 @@ export class WorkbookRepository extends Repository<Workbook> {
       .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .getMany();
 
-    const items = result.sort((a, b) => b.likes.length - a.likes.length);
+    const items = result
+      .filter((item) => item.likes?.length)
+      .sort((a, b) => b.likes.length - a.likes.length);
+
+    console.log(items.length);
 
     return { ...pageInfo, items };
   }
