@@ -102,6 +102,8 @@ export class WorkbookRepository extends Repository<Workbook> {
       .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .getMany();
 
-    return { ...pageInfo, items: result };
+    const items = result.sort((a, b) => b.likes.length - a.likes.length);
+
+    return { ...pageInfo, items };
   }
 }
