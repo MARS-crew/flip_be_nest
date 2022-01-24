@@ -18,6 +18,8 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   username: dbConfig.username,
   password: dbConfig.password,
   database: dbConfig.database,
+  timezone: 'Z',
+  charset: 'utf8mb4',
   entities: [__dirname + '../../../**/*.entity.{js,ts}'],
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
