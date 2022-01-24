@@ -19,8 +19,8 @@ export class WorkbookDetailResponse {
     this.updatedAt = workbook.updatedAt;
     this.user = new UserInfoResponse(workbook.user);
     this.cards = workbook.cards.map((card) => new WorkbookCardResponse(card));
-    this.likeCount = workbook.likes.length;
-    this.hasLike = workbook.likes.filter((like) => like.userId === userId)
+    this.likeCount = workbook.likes?.length;
+    this.hasLike = workbook.likes?.filter((like) => like.userId === userId)
       .length
       ? true
       : false;
