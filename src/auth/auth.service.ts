@@ -1,16 +1,13 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as config from 'config';
 import { LoginRequest } from './dto/login.request';
+import { RefreshTokenRequest } from './dto/refresh-token.request';
 import { SignUpRequest } from './dto/sign-up.request';
 import { TokenResponse } from './dto/token.response';
 import { User } from './entities/user.entity';
 import { UserRepository } from './user.repository';
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,9 +18,13 @@ export class AuthService {
   async signUp(signUpRequest: SignUpRequest): Promise<TokenResponse> {
     const newUser: User = await this.userRepository.signUp(signUpRequest);
 
-    const accessToken = this.jwtService.sign({ email: newUser.email });
+    const tokenResponse: TokenResponse = await this.generateUserToken(
+      newUser.email,
+    );
 
-    return new TokenResponse({ accessToken });
+    await this.updateUserRefreshToken(newUser, tokenResponse.refreshToken);
+
+    return tokenResponse;
   }
 
   async login(loginRequest: LoginRequest): Promise<TokenResponse> {
@@ -34,16 +35,57 @@ export class AuthService {
       throw new NotFoundException(`Can't find user with email : ${email}`);
     }
 
-    const isValid: boolean = await findUser.validatePassword(password);
+    await findUser.validatePassword(password);
 
-    if (!isValid) {
-      throw new UnauthorizedException('Invalid Password');
-    }
+    const tokenResponse: TokenResponse = await this.generateUserToken(
+      findUser.email,
+    );
 
-    const accessToken: string = await this.jwtService.signAsync({
-      email: findUser.email,
-    });
+    await this.updateUserRefreshToken(findUser, tokenResponse.refreshToken);
 
-    return new TokenResponse({ accessToken });
+    return tokenResponse;
+  }
+
+  async refreshToken(
+    user: User,
+    refreshTokenRequest: RefreshTokenRequest,
+  ): Promise<TokenResponse> {
+    user.validateEncodedRefreshToken(refreshTokenRequest.refreshToken);
+
+    const tokenResponse: TokenResponse = await this.generateUserToken(
+      user.email,
+    );
+
+    await this.updateUserRefreshToken(user, tokenResponse.refreshToken);
+
+    return tokenResponse;
+  }
+
+  private async updateUserRefreshToken(user: User, refreshToken: string) {
+    user.updateRefreshToken(refreshToken);
+    await this.userRepository.save(user);
+  }
+
+  private async generateUserToken(email: string): Promise<TokenResponse> {
+    const accessToken: string = await this.generateAccessToken(email);
+    const refreshToken: string = await this.generateRefreshToken(email);
+
+    return new TokenResponse({ accessToken, refreshToken });
+  }
+
+  private async generateRefreshToken(email: string): Promise<string> {
+    return await this.jwtService.signAsync(
+      {
+        email,
+      },
+      {
+        secret: config.get('jwt.refreshSecret'),
+        expiresIn: config.get('jwt.refreshExpiresIn'),
+      },
+    );
+  }
+
+  private async generateAccessToken(email: string): Promise<string> {
+    return await this.jwtService.signAsync({ email });
   }
 }

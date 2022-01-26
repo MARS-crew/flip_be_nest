@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as config from 'config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtRefreshStrategy } from './config/jwt-refresh.strategy';
 import { JwtStrategy } from './config/jwt.strategy';
 import { UserRepository } from './user.repository';
 
@@ -22,7 +23,7 @@ const jwtConfig: { secret: string; expiresIn: number } = config.get('jwt');
     TypeOrmModule.forFeature([UserRepository]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
   exports: [JwtStrategy, PassportModule, TypeOrmModule],
 })
 export class AuthModule {}

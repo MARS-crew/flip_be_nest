@@ -9,3 +9,4 @@ db:
 
 jwt:
   secret: mars-flip-secret-key-dev-mars-flip-secret-key-dev-mars-flip-secret-key-dev
+  refreshSecret: refresh-mars-flip-secret-key-dev-refresh-mars-flip-secret-key-dev-refresh-mars-flip-secret-key-dev
