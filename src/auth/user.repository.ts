@@ -21,4 +21,8 @@ export class UserRepository extends Repository<User> {
 
     return newUser;
   }
+
+  async removeRefreshToken(user: User): Promise<void> {
+    this.update({ id: user.id }, { refreshToken: null });
+  }
 }
