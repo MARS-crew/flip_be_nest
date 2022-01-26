@@ -1,8 +1,18 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { GetUser } from './decorators/get-user.decorator';
 import { LoginRequest } from './dto/login.request';
+import { RefreshTokenRequest } from './dto/refresh-token.request';
 import { SignUpRequest } from './dto/sign-up.request';
 import { TokenResponse } from './dto/token.response';
+import { User } from './entities/user.entity';
+import { JwtRefreshGuard } from './guard/refresh-token.guard';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -20,5 +30,14 @@ export class AuthController {
     @Body(ValidationPipe) loginRequest: LoginRequest,
   ): Promise<TokenResponse> {
     return this.authService.login(loginRequest);
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Post('/token/refresh')
+  async refreshToken(
+    @GetUser() user: User,
+    @Body() refreshTokenRequest: RefreshTokenRequest,
+  ) {
+    return this.authService.refreshToken(user, refreshTokenRequest);
   }
 }

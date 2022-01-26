@@ -1,4 +1,5 @@
 import { BaseTimeEntity } from '@/common/entity/base-time.entity';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Profile } from './profile';
@@ -17,6 +18,9 @@ export class User extends BaseTimeEntity {
   @Column(() => Profile)
   profile: Profile;
 
+  @Column()
+  refreshToken?: string;
+
   static async of(payload: {
     email: string;
     encodedPassword: string;
@@ -33,7 +37,19 @@ export class User extends BaseTimeEntity {
     this.password = encodedPassword;
   }
 
-  async validatePassword(rawPassword: string): Promise<boolean> {
-    return await bcrypt.compare(rawPassword, this.password);
+  async validatePassword(rawPassword: string): Promise<void> {
+    if (!(await bcrypt.compare(rawPassword, this.password))) {
+      throw new BadRequestException('Invalid Password');
+    }
+  }
+
+  updateRefreshToken(encodedRefreshToken: string) {
+    this.refreshToken = encodedRefreshToken;
+  }
+
+  validateEncodedRefreshToken(rawRefreshToken: string): void {
+    if (rawRefreshToken !== this.refreshToken) {
+      throw new UnauthorizedException('Invalid RefreshToken');
+    }
   }
 }
