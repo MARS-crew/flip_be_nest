@@ -18,7 +18,7 @@ export class User extends BaseTimeEntity {
   @Column(() => Profile)
   profile: Profile;
 
-  @Column()
+  @Column({ nullable: true })
   refreshToken?: string;
 
   static async of(payload: {
