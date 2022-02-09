@@ -1,4 +1,5 @@
-import { GetUser } from '@/auth/decorators/get-user.decorator';
+import { User } from '@/auth/domain/user.entity';
+import { GetUser } from '@/common/decorators/get-user.decorator';
 import {
   Body,
   Controller,
@@ -18,16 +19,15 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { User } from 'src/auth/entities/user.entity';
-import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
-import { CreateWorkbookRequest } from './dto/create-workbook.request';
-import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
-import { UpdateWorkbookRequest } from './dto/update-workbook.request';
-import { WorkbookCardResponse } from './dto/workbook-card.response';
-import { WorkbookDetailResponse } from './dto/workbook-detail.response';
-import { WorkbookResponse } from './dto/workbook.response';
-import { WorkbookLikeType } from './entities/workbook-like.entity';
-import { WorkbookService } from './workbook.service';
+import { WorkbookService } from '../application/workbook.service';
+import { WorkbookLikeType } from '../domain/workbook-like.entity';
+import { CreateWorkBookCardRequest } from './create-workbook-card.request';
+import { CreateWorkbookRequest } from './create-workbook.request';
+import { UpdateWorkBookCardRequest } from './update-workbook-card.request';
+import { UpdateWorkbookRequest } from './update-workbook.request';
+import { WorkbookCardResponse } from './workbook-card.response';
+import { WorkbookDetailResponse } from './workbook-detail.response';
+import { WorkbookResponse } from './workbook.response';
 
 @Controller('api/v1/workbooks')
 export class WorkbookController {

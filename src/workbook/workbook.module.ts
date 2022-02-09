@@ -1,12 +1,12 @@
+import { CommonModule } from '@/common/common.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
-import { WorkbookController } from './workbook.controller';
-import { WorkbookRepository } from './workbook.repository';
-import { WorkbookService } from './workbook.service';
+import { WorkbookService } from './application/workbook.service';
+import { WorkbookRepository } from './infrastructure/workbook.repository';
+import { WorkbookController } from './interfaces/workbook.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkbookRepository]), AuthModule],
+  imports: [CommonModule, TypeOrmModule.forFeature([WorkbookRepository])],
   controllers: [WorkbookController],
   providers: [WorkbookService],
 })

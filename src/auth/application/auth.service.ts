@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as config from 'config';
-import { LoginRequest } from './dto/login.request';
-import { RefreshTokenRequest } from './dto/refresh-token.request';
-import { SignUpRequest } from './dto/sign-up.request';
-import { TokenResponse } from './dto/token.response';
-import { User } from './entities/user.entity';
-import { UserRepository } from './user.repository';
+import { User } from '../domain/user.entity';
+import { UserRepository } from '../infrastructure/user.repository';
+import { LoginRequest } from '../interfaces/login.request';
+import { RefreshTokenRequest } from '../interfaces/refresh-token.request';
+import { SignUpRequest } from '../interfaces/sign-up.request';
+import { TokenResponse } from '../interfaces/token.response';
 @Injectable()
 export class AuthService {
   constructor(

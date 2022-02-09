@@ -1,4 +1,4 @@
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '@/auth/domain/user.entity';
 import { BaseTimeEntity } from 'src/common/entity/base-time.entity';
 import {
   Column,

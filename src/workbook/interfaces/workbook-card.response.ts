@@ -1,4 +1,4 @@
-import { WorkbookCard } from '../entities/workbook-card.entity';
+import { WorkbookCard } from '../domain/workbook-card.entity';
 
 export class WorkbookCardResponse {
   id: number;

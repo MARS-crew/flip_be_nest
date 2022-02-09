@@ -1,5 +1,5 @@
-import { Profile } from '@/auth/entities/profile';
-import { User } from '@/auth/entities/user.entity';
+import { Profile } from '@/auth/domain/profile';
+import { User } from '@/auth/domain/user.entity';
 
 export class UserInfoResponse {
   id: number;

@@ -1,21 +1,18 @@
+import { User } from '@/auth/domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
-import { User } from 'src/auth/entities/user.entity';
-import { CreateWorkBookCardRequest } from './dto/create-workbook-card.request';
-import { CreateWorkbookRequest } from './dto/create-workbook.request';
-import { UpdateWorkBookCardRequest } from './dto/update-workbook-card.request';
-import { UpdateWorkbookRequest } from './dto/update-workbook.request';
-import { WorkbookCardResponse } from './dto/workbook-card.response';
-import { WorkbookDetailResponse } from './dto/workbook-detail.response';
-import { WorkbookResponse } from './dto/workbook.response';
-import { WorkbookCard } from './entities/workbook-card.entity';
-import {
-  WorkbookLike,
-  WorkbookLikeType,
-} from './entities/workbook-like.entity';
-import { Workbook } from './entities/workbook.entity';
-import { WorkbookRepository } from './workbook.repository';
+import { WorkbookCard } from '../domain/workbook-card.entity';
+import { WorkbookLike, WorkbookLikeType } from '../domain/workbook-like.entity';
+import { Workbook } from '../domain/workbook.entity';
+import { WorkbookRepository } from '../infrastructure/workbook.repository';
+import { CreateWorkBookCardRequest } from '../interfaces/create-workbook-card.request';
+import { CreateWorkbookRequest } from '../interfaces/create-workbook.request';
+import { UpdateWorkBookCardRequest } from '../interfaces/update-workbook-card.request';
+import { UpdateWorkbookRequest } from '../interfaces/update-workbook.request';
+import { WorkbookCardResponse } from '../interfaces/workbook-card.response';
+import { WorkbookDetailResponse } from '../interfaces/workbook-detail.response';
+import { WorkbookResponse } from '../interfaces/workbook.response';
 
 @Injectable()
 export class WorkbookService {

@@ -6,14 +6,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
-import { GetUser } from './decorators/get-user.decorator';
-import { LoginRequest } from './dto/login.request';
-import { RefreshTokenRequest } from './dto/refresh-token.request';
-import { SignUpRequest } from './dto/sign-up.request';
-import { TokenResponse } from './dto/token.response';
-import { User } from './entities/user.entity';
-import { JwtRefreshGuard } from './guard/refresh-token.guard';
+import { GetUser } from '../../common/decorators/get-user.decorator';
+import { JwtRefreshGuard } from '../../common/guards/refresh-token.guard';
+import { AuthService } from '../application/auth.service';
+import { User } from '../domain/user.entity';
+import { LoginRequest } from './login.request';
+import { RefreshTokenRequest } from './refresh-token.request';
+import { SignUpRequest } from './sign-up.request';
+import { TokenResponse } from './token.response';
 
 @Controller('api/v1/auth')
 export class AuthController {

@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as config from 'config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from '../entities/user.entity';
-import { UserRepository } from '../user.repository';
+import { User } from '../../auth/domain/user.entity';
+import { UserRepository } from '../../auth/infrastructure/user.repository';
 
 const jwtConfig: { secret: string } = config.get('jwt');
 
