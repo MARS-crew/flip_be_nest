@@ -1,5 +1,6 @@
 import { User } from '@/auth/domain/user.entity';
 import { GetUser } from '@/common/decorators/get-user.decorator';
+import { ApiResponse } from '@/common/response/api.response';
 import {
   Body,
   Controller,
@@ -35,107 +36,168 @@ export class WorkbookController {
 
   @UseGuards(AuthGuard())
   @Get('/top')
-  findAllMostLikesWorkbook(
+  async findAllMostLikesWorkbook(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @GetUser() user: User,
-  ): Promise<Pagination<WorkbookDetailResponse>> {
-    return this.workbookService.findAllMostLikesWorkbook(user, { page, limit });
+  ): Promise<ApiResponse<Pagination<WorkbookDetailResponse>>> {
+    const response: Pagination<WorkbookDetailResponse> =
+      await this.workbookService.findAllMostLikesWorkbook(user, {
+        page,
+        limit,
+      });
+
+    return ApiResponse.of({
+      data: response,
+      message: 'success find all most likes workbooks',
+    });
   }
 
   @UseGuards(AuthGuard())
   @Patch('/cards/:cardId')
-  updateCard(
+  async updateCard(
     @Param('cardId', ParseIntPipe) cardId: number,
     @GetUser() user: User,
     @Body(ValidationPipe) updateWorkBookCardRequest: UpdateWorkBookCardRequest,
-  ): Promise<WorkbookCardResponse> {
-    return this.workbookService.updateWorkBookCard(
-      user,
-      cardId,
-      updateWorkBookCardRequest,
-    );
+  ): Promise<ApiResponse<WorkbookCardResponse>> {
+    const response: WorkbookCardResponse =
+      await this.workbookService.updateWorkBookCard(
+        user,
+        cardId,
+        updateWorkBookCardRequest,
+      );
+
+    return ApiResponse.of({ data: response, message: 'success update card' });
   }
 
   @UseGuards(AuthGuard())
   @Delete('/cards/:cardId')
-  deleteCard(
+  async deleteCard(
     @Param('cardId', ParseIntPipe) cardId: number,
     @GetUser() user: User,
-  ): Promise<void> {
-    return this.workbookService.deleteWorkBookCard(user, cardId);
+  ): Promise<ApiResponse<void>> {
+    await this.workbookService.deleteWorkBookCard(user, cardId);
+
+    return ApiResponse.of({ message: 'success delete card' });
   }
 
   @UseGuards(AuthGuard())
+  @HttpCode(HttpStatus.CREATED)
   @Post('/:workbookId/cards')
-  createCards(
+  async createCard(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
     @Body(ValidationPipe) createWorkBookCardRequest: CreateWorkBookCardRequest,
-  ): Promise<WorkbookDetailResponse> {
-    return this.workbookService.createWorkBookCard(
-      user,
-      workbookId,
-      createWorkBookCardRequest,
-    );
+  ): Promise<ApiResponse<WorkbookDetailResponse>> {
+    const response: WorkbookDetailResponse =
+      await this.workbookService.createWorkBookCard(
+        user,
+        workbookId,
+        createWorkBookCardRequest,
+      );
+
+    return ApiResponse.of({
+      data: response,
+      message: 'success create card',
+      statusCode: HttpStatus.CREATED,
+    });
   }
 
   @UseGuards(AuthGuard())
   @Get('/me')
-  me(
+  async me(
     @GetUser() user: User,
     @Query('page', new DefaultValuePipe(1)) page = 1,
     @Query('limit', new DefaultValuePipe(10)) limit = 10,
-  ): Promise<Pagination<WorkbookDetailResponse>> {
-    return this.workbookService.me(user, { page, limit });
+  ): Promise<ApiResponse<Pagination<WorkbookDetailResponse>>> {
+    const response: Pagination<WorkbookDetailResponse> =
+      await this.workbookService.me(user, { page, limit });
+
+    return ApiResponse.of({
+      data: response,
+      message: 'success find all my workbooks',
+    });
   }
 
   @UseGuards(AuthGuard())
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  create(
+  async create(
     @Body(ValidationPipe) createWorkbookDto: CreateWorkbookRequest,
     @GetUser() user: User,
-  ): Promise<WorkbookResponse> {
-    return this.workbookService.create(user, createWorkbookDto);
+  ): Promise<ApiResponse<WorkbookResponse>> {
+    const response: WorkbookResponse = await this.workbookService.create(
+      user,
+      createWorkbookDto,
+    );
+
+    return ApiResponse.of({
+      data: response,
+      message: 'succes create workbook',
+      statusCode: HttpStatus.CREATED,
+    });
   }
 
   @UseGuards(AuthGuard())
   @Get()
-  findAll(
+  async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @GetUser() user: User,
-  ): Promise<Pagination<WorkbookDetailResponse>> {
-    return this.workbookService.findAll(user, { page, limit });
+  ): Promise<ApiResponse<Pagination<WorkbookDetailResponse>>> {
+    const response: Pagination<WorkbookDetailResponse> =
+      await this.workbookService.findAll(user, { page, limit });
+
+    return ApiResponse.of({
+      data: response,
+      message: 'succes find all workbooks',
+    });
   }
 
   @UseGuards(AuthGuard())
   @Get(':workbookId')
-  findOne(
+  async findOne(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
-  ): Promise<WorkbookDetailResponse> {
-    return this.workbookService.findOne(user, workbookId);
+  ): Promise<ApiResponse<WorkbookDetailResponse>> {
+    const response: WorkbookDetailResponse = await this.workbookService.findOne(
+      user,
+      workbookId,
+    );
+
+    return ApiResponse.of({
+      data: response,
+      message: 'succes find one workbook',
+    });
   }
 
   @UseGuards(AuthGuard())
   @Patch(':workbookId')
-  update(
+  async update(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @Body(ValidationPipe) updateWorkbookRequest: UpdateWorkbookRequest,
     @GetUser() user: User,
-  ): Promise<WorkbookResponse> {
-    return this.workbookService.update(user, workbookId, updateWorkbookRequest);
+  ): Promise<ApiResponse<WorkbookResponse>> {
+    const response: WorkbookResponse = await this.workbookService.update(
+      user,
+      workbookId,
+      updateWorkbookRequest,
+    );
+
+    return ApiResponse.of({
+      data: response,
+      message: 'succes update workbook',
+    });
   }
 
   @UseGuards(AuthGuard())
   @Delete(':workbookId')
-  remove(
+  async delete(
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
-  ): Promise<void> {
-    return this.workbookService.remove(user, workbookId);
+  ): Promise<ApiResponse<void>> {
+    await this.workbookService.delete(user, workbookId);
+    return ApiResponse.of({ message: 'succes delete workbook' });
   }
 
   @UseGuards(AuthGuard())
@@ -144,12 +206,16 @@ export class WorkbookController {
     @Param('workbookId', ParseIntPipe) workbookId: number,
     @GetUser() user: User,
     // @Body(ValidationPipe) updateWorkbookLikeRequest: UpdateWorkbookLikeRequest,
-  ) {
-    return this.workbookService.likeByType(
+  ): Promise<ApiResponse<void>> {
+    await this.workbookService.likeByType(
       user,
       workbookId,
       WorkbookLikeType.LIKE,
       // updateWorkbookLikeRequest.type,
     );
+
+    return ApiResponse.of({
+      message: 'succes update workbook like',
+    });
   }
 }

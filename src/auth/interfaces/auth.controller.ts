@@ -22,8 +22,8 @@ import { TokenResponse } from './token.response';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
+  @Post('/signup')
   async signUp(
     @Body(ValidationPipe) signUpRequest: SignUpRequest,
   ): Promise<ApiResponse<TokenResponse>> {

@@ -106,7 +106,7 @@ export class WorkbookService {
     return new WorkbookResponse(savedWorkbook);
   }
 
-  async remove(user: User, workbookId: number): Promise<void> {
+  async delete(user: User, workbookId: number): Promise<void> {
     const result = await this.workbookRepository.delete({
       id: workbookId,
       user: { id: user.id },
