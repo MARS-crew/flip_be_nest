@@ -27,7 +27,9 @@ export class AuthController {
   async signUp(
     @Body(ValidationPipe) signUpRequest: SignUpRequest,
   ): Promise<ApiResponse<TokenResponse>> {
-    const response = await this.authService.signUp(signUpRequest);
+    const response: TokenResponse = await this.authService.signUp(
+      signUpRequest,
+    );
     return ApiResponse.of({
       data: response,
       message: 'success signup',
@@ -39,7 +41,7 @@ export class AuthController {
   async login(
     @Body(ValidationPipe) loginRequest: LoginRequest,
   ): Promise<ApiResponse<TokenResponse>> {
-    const response = await this.authService.login(loginRequest);
+    const response: TokenResponse = await this.authService.login(loginRequest);
     return ApiResponse.of({
       data: response,
       message: 'success login',
@@ -52,7 +54,7 @@ export class AuthController {
     @GetUser() user: User,
     @Body() refreshTokenRequest: RefreshTokenRequest,
   ): Promise<ApiResponse<TokenResponse>> {
-    const response = await this.authService.refreshToken(
+    const response: TokenResponse = await this.authService.refreshToken(
       user,
       refreshTokenRequest,
     );
