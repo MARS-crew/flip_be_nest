@@ -1,5 +1,5 @@
-import { UserInfoResponse } from '@/user/dto/user-info.response';
-import { Workbook } from '../entities/workbook.entity';
+import { UserInfoResponse } from '@/user/interfaces/user-info.response';
+import { Workbook } from '../domain/workbook.entity';
 import { WorkbookCardResponse } from './workbook-card.response';
 
 export class WorkbookDetailResponse {

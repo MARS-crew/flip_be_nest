@@ -1,8 +1,8 @@
-import { User } from '@/auth/entities/user.entity';
+import { User } from '@/auth/domain/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserRepository } from '../auth/user.repository';
-import { UserInfoResponse } from './dto/user-info.response';
+import { UserRepository } from '../../auth/infrastructure/user.repository';
+import { UserInfoResponse } from '../interfaces/user-info.response';
 
 @Injectable()
 export class UserService {

@@ -1,12 +1,12 @@
+import { User } from '@/auth/domain/user.entity';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { User } from 'src/auth/entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { CreateWorkbookRequest } from './dto/create-workbook.request';
-import { Workbook } from './entities/workbook.entity';
+import { Workbook } from '../domain/workbook.entity';
+import { CreateWorkbookRequest } from '../interfaces/create-workbook.request';
 
 @EntityRepository(Workbook)
 export class WorkbookRepository extends Repository<Workbook> {
