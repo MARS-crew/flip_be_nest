@@ -1,6 +1,9 @@
+import { ApiResponse } from '@/common/response/api.response';
 import {
   Body,
   Controller,
+  HttpCode,
+  HttpStatus,
   Post,
   UseGuards,
   ValidationPipe,
@@ -20,17 +23,27 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
+  @HttpCode(HttpStatus.CREATED)
   async signUp(
     @Body(ValidationPipe) signUpRequest: SignUpRequest,
-  ): Promise<TokenResponse> {
-    return this.authService.signUp(signUpRequest);
+  ): Promise<ApiResponse<TokenResponse>> {
+    const response = await this.authService.signUp(signUpRequest);
+    return ApiResponse.of({
+      data: response,
+      message: 'success signup',
+      statusCode: HttpStatus.CREATED,
+    });
   }
 
   @Post('/login')
   async login(
     @Body(ValidationPipe) loginRequest: LoginRequest,
-  ): Promise<TokenResponse> {
-    return this.authService.login(loginRequest);
+  ): Promise<ApiResponse<TokenResponse>> {
+    const response = await this.authService.login(loginRequest);
+    return ApiResponse.of({
+      data: response,
+      message: 'success login',
+    });
   }
 
   @UseGuards(JwtRefreshGuard)
@@ -38,13 +51,23 @@ export class AuthController {
   async refreshToken(
     @GetUser() user: User,
     @Body() refreshTokenRequest: RefreshTokenRequest,
-  ) {
-    return this.authService.refreshToken(user, refreshTokenRequest);
+  ): Promise<ApiResponse<TokenResponse>> {
+    const response = await this.authService.refreshToken(
+      user,
+      refreshTokenRequest,
+    );
+    return ApiResponse.of({
+      data: response,
+      message: 'succes refresh token',
+    });
   }
 
   @UseGuards(AuthGuard())
   @Post('/logout')
-  async logout(@GetUser() user: User): Promise<void> {
-    return this.authService.logout(user);
+  async logout(@GetUser() user: User): Promise<ApiResponse<void>> {
+    await this.authService.logout(user);
+    return ApiResponse.of({
+      message: 'success logout',
+    });
   }
 }
