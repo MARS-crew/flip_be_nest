@@ -1,5 +1,9 @@
 import { TokenProvider } from '@/common/utils/token-provider';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserFactory } from 'test/utils/user.factory';
 import { AuthService } from '../application/auth.service';
@@ -182,6 +186,26 @@ describe('AuthService unit test', () => {
     expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
     // first create + refreshtoken = 2 times
     expect(userRepositorySaveSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('회원가입 실패 - 이미 존재하는 회원', async () => {
+    // given
+    const signUpRequest: SignUpRequest = generateSignUpRequest({});
+
+    const userRepositoryFindOneSpy = jest
+      .spyOn(userRepository, 'findOne')
+      .mockResolvedValue(user);
+
+    // when
+    try {
+      await authService.signUp(signUpRequest);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ConflictException);
+    }
+
+    // then
+    expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
+    // first create + refreshtoken = 2 times
   });
 });
 
