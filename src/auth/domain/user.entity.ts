@@ -21,14 +21,11 @@ export class User extends BaseTimeEntity {
   @Column({ nullable: true })
   refreshToken?: string;
 
-  static async of(payload: {
-    email: string;
-    encodedPassword: string;
-  }): Promise<User> {
+  static of(payload: { email: string; encodedPassword: string }): User {
     const user = new User();
     user.email = payload.email;
     user.password = payload.encodedPassword;
-    user.profile = await Profile.of(payload.email, null);
+    user.profile = Profile.of(payload.email, null);
 
     return user;
   }
