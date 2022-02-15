@@ -1,5 +1,5 @@
 import { TokenProvider } from '@/common/utils/token-provider';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserFactory } from 'test/utils/user.factory';
 import { AuthService } from '../application/auth.service';
@@ -85,6 +85,30 @@ describe('AuthService unit test', () => {
 
     // then
 
+    expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
+    expect(userRepositoryFindOneSpy).toHaveBeenCalledWith({
+      email: loginRequest.email,
+    });
+  });
+
+  it('로그인 실패 - 비밀번호 불일치', async () => {
+    // given
+    const loginRequest = await generateLoginRequest({
+      password: 'anotherPassword',
+    });
+
+    const userRepositoryFindOneSpy = jest
+      .spyOn(userRepository, 'findOne')
+      .mockResolvedValue(user);
+
+    // when
+    try {
+      await authService.login(loginRequest);
+    } catch (error) {
+      expect(error).toBeInstanceOf(BadRequestException);
+    }
+
+    // then
     expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
     expect(userRepositoryFindOneSpy).toHaveBeenCalledWith({
       email: loginRequest.email,
