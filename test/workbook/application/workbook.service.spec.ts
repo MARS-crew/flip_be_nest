@@ -1,10 +1,10 @@
 import { User } from '@/auth/domain/user.entity';
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkbookService } from '../application/workbook.service';
-import { Workbook } from '../domain/workbook.entity';
-import { WorkbookRepository } from '../infrastructure/workbook.repository';
-import { CreateWorkbookRequest } from '../interfaces/create-workbook.request';
-import { WorkbookResponse } from '../interfaces/workbook.response';
+import { WorkbookService } from '../../../src/workbook/application/workbook.service';
+import { Workbook } from '../../../src/workbook/domain/workbook.entity';
+import { WorkbookRepository } from '../../../src/workbook/infrastructure/workbook.repository';
+import { CreateWorkbookRequest } from '../../../src/workbook/interfaces/create-workbook.request';
+import { WorkbookResponse } from '../../../src/workbook/interfaces/workbook.response';
 
 describe('WorkbookService', () => {
   let workbookService: WorkbookService;

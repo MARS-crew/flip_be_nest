@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserFactory } from 'test/utils/user.factory';
-import { AuthService } from '../application/auth.service';
-import { User } from '../domain/user.entity';
-import { UserRepository } from '../infrastructure/user.repository';
-import { LoginRequest } from '../interfaces/login.request';
-import { SignUpRequest } from '../interfaces/sign-up.request';
-import { TokenResponse } from '../interfaces/token.response';
+import { AuthService } from '../../../src/auth/application/auth.service';
+import { User } from '../../../src/auth/domain/user.entity';
+import { UserRepository } from '../../../src/auth/infrastructure/user.repository';
+import { LoginRequest } from '../../../src/auth/interfaces/login.request';
+import { SignUpRequest } from '../../../src/auth/interfaces/sign-up.request';
+import { TokenResponse } from '../../../src/auth/interfaces/token.response';
 
 const mockUserInfo = { email: 'test@test.com', password: '1234' };
 const mockAccessToken = 'access.token.c';
