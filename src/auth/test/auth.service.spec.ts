@@ -5,15 +5,18 @@ import { UserFactory } from 'test/utils/user.factory';
 import { AuthService } from '../application/auth.service';
 import { UserRepository } from '../infrastructure/user.repository';
 import { LoginRequest } from '../interfaces/login.request';
+import { TokenResponse } from '../interfaces/token.response';
 
 const mockUserInfo = { email: 'test@test.com', password: '1234' };
-const mockToken = 'a.b.c';
+const mockAccessToken = 'access.token.c';
+const mockRefreshToken = 'refresh.token.c';
+
 const mockTokenProvider = {
-  generateRefreshToken() {
-    return mockToken;
-  },
   generateAccessToken() {
-    return mockToken;
+    return mockAccessToken;
+  },
+  generateRefreshToken() {
+    return mockRefreshToken;
   },
 };
 
@@ -55,6 +58,35 @@ describe('AuthService unit test', () => {
     await authService.login(loginRequest);
 
     // then
+    expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
+    expect(userRepositoryFindOneSpy).toHaveBeenCalledWith({
+      email: loginRequest.email,
+    });
+
+    expect(userRepositorySaveSpy).toHaveBeenCalledTimes(1);
+    expect(userRepositorySaveSpy).toHaveBeenCalledWith(user);
+  });
+
+  it('로그인 성공 - refreshToken 저장', async () => {
+    // given
+    const loginRequest = await generateLoginRequest({});
+
+    const userRepositoryFindOneSpy = jest
+      .spyOn(userRepository, 'findOne')
+      .mockResolvedValue(user);
+
+    const userRepositorySaveSpy = jest
+      .spyOn(userRepository, 'save')
+      .mockResolvedValue(user);
+
+    // when
+    const result: TokenResponse = await authService.login(loginRequest);
+
+    // then
+
+    expect(user.refreshToken).toBe(result.refreshToken);
+    expect(user.refreshToken).toBe(mockRefreshToken);
+
     expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
     expect(userRepositoryFindOneSpy).toHaveBeenCalledWith({
       email: loginRequest.email,
