@@ -5,18 +5,14 @@
 FLIP : 나만의 문제집 프로젝트 BackEnd 리포
 
 ## Tech Stack
-
-<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
-<img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=NestJS&logoColor=white"> 
-<img src="https://img.shields.io/badge/TypeORM-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
-
-<br>
-
-<img src="https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=Jest&logoColor=white"> 
-
-<br>
-<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white">
-<img src="https://img.shields.io/badge/pm2-2B037A?style=for-the-badge&logo=PM2&logoColor=white">
+<div>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
+  <img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=NestJS&logoColor=white"> 
+  <img src="https://img.shields.io/badge/TypeORM-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
+  <img src="https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=Jest&logoColor=white"> 
+  <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white">
+  <img src="https://img.shields.io/badge/pm2-2B037A?style=for-the-badge&logo=PM2&logoColor=white">
+</div>
 
 
 
