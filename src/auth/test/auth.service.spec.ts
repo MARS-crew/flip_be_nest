@@ -5,6 +5,7 @@ import { UserFactory } from 'test/utils/user.factory';
 import { AuthService } from '../application/auth.service';
 import { UserRepository } from '../infrastructure/user.repository';
 import { LoginRequest } from '../interfaces/login.request';
+import { SignUpRequest } from '../interfaces/sign-up.request';
 import { TokenResponse } from '../interfaces/token.response';
 
 const mockUserInfo = { email: 'test@test.com', password: '1234' };
@@ -44,7 +45,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 성공', async () => {
     // given
-    const loginRequest = await generateLoginRequest({});
+    const loginRequest = generateLoginRequest({});
 
     const userRepositoryFindOneSpy = jest
       .spyOn(userRepository, 'findOne')
@@ -69,7 +70,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 성공 - refreshToken 저장', async () => {
     // given
-    const loginRequest = await generateLoginRequest({});
+    const loginRequest = generateLoginRequest({});
 
     const userRepositoryFindOneSpy = jest
       .spyOn(userRepository, 'findOne')
@@ -98,7 +99,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 실패 - 존재하지 않는 회원', async () => {
     // given
-    const loginRequest = await generateLoginRequest({
+    const loginRequest = generateLoginRequest({
       email: 'asd@test.com',
       password: '1234',
     });
@@ -125,7 +126,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 실패 - 비밀번호 불일치', async () => {
     // given
-    const loginRequest = await generateLoginRequest({
+    const loginRequest = generateLoginRequest({
       password: 'anotherPassword',
     });
 
@@ -147,7 +148,7 @@ describe('AuthService unit test', () => {
     });
   });
 
-  it('로그아웃 성공', async () => {
+  it('로그아웃 성공 (refreshToken 제거)', async () => {
     // given
     const userRepositoryRemoveRefreshTokenSpy = jest
       .spyOn(userRepository, 'removeRefreshToken')
@@ -157,15 +158,35 @@ describe('AuthService unit test', () => {
     await authService.logout(user);
 
     // then
-
     expect(userRepositoryRemoveRefreshTokenSpy).toHaveBeenCalledTimes(1);
     expect(userRepositoryRemoveRefreshTokenSpy).toHaveBeenCalledWith(user);
   });
+
+  it('회원가입 성공', async () => {
+    // given
+    // when
+    // then
+  });
 });
 
-const generateLoginRequest = async ({
+const generateLoginRequest = ({
   email = mockUserInfo.email,
   password = mockUserInfo.password,
-}) => {
-  return LoginRequest.of({ email, password });
+}): LoginRequest => {
+  const loginRequest = new LoginRequest();
+  loginRequest.email = email;
+  loginRequest.password = password;
+
+  return loginRequest;
+};
+
+const generateSignUpRequest = ({
+  email = mockUserInfo.email,
+  password = mockUserInfo.password,
+}): SignUpRequest => {
+  const signUpRequest = new SignUpRequest();
+  signUpRequest.email = email;
+  signUpRequest.password = password;
+
+  return signUpRequest;
 };
