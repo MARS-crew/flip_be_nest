@@ -133,7 +133,7 @@ export class WorkbookController {
 
     return ApiResponse.of({
       data: response,
-      message: 'succes create workbook',
+      message: 'success create workbook',
       statusCode: HttpStatus.CREATED,
     });
   }
@@ -150,7 +150,7 @@ export class WorkbookController {
 
     return ApiResponse.of({
       data: response,
-      message: 'succes find all workbooks',
+      message: 'success find all workbooks',
     });
   }
 
@@ -167,7 +167,7 @@ export class WorkbookController {
 
     return ApiResponse.of({
       data: response,
-      message: 'succes find one workbook',
+      message: 'success find one workbook',
     });
   }
 
@@ -186,7 +186,7 @@ export class WorkbookController {
 
     return ApiResponse.of({
       data: response,
-      message: 'succes update workbook',
+      message: 'success update workbook',
     });
   }
 
@@ -215,7 +215,7 @@ export class WorkbookController {
     );
 
     return ApiResponse.of({
-      message: 'succes update workbook like',
+      message: 'success update workbook like',
     });
   }
 }

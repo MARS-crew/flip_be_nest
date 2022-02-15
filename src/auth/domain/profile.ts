@@ -7,7 +7,7 @@ export class Profile {
   @Column({ nullable: true })
   photo: string;
 
-  static async of(nickname: string, photo: string): Promise<Profile> {
+  static of(nickname: string, photo: string): Profile {
     const profile = new Profile();
     profile.nickname = nickname;
     profile.photo = photo;

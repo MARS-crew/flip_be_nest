@@ -60,7 +60,7 @@ export class AuthController {
     );
     return ApiResponse.of({
       data: response,
-      message: 'succes refresh token',
+      message: 'success refresh token',
     });
   }
 

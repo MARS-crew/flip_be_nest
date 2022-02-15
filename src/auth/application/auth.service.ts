@@ -1,7 +1,6 @@
+import { TokenProvider } from '@/common/utils/token-provider';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as config from 'config';
 import { User } from '../domain/user.entity';
 import { UserRepository } from '../infrastructure/user.repository';
 import { LoginRequest } from '../interfaces/login.request';
@@ -13,7 +12,7 @@ export class AuthService {
   constructor(
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
-    private readonly jwtService: JwtService,
+    private readonly tokenProvider: TokenProvider,
   ) {}
 
   async signUp(signUpRequest: SignUpRequest): Promise<TokenResponse> {
@@ -72,25 +71,13 @@ export class AuthService {
   }
 
   private async generateUserToken(email: string): Promise<TokenResponse> {
-    const accessToken: string = await this.generateAccessToken(email);
-    const refreshToken: string = await this.generateRefreshToken(email);
+    const accessToken: string = await this.tokenProvider.generateAccessToken(
+      email,
+    );
+    const refreshToken: string = await this.tokenProvider.generateRefreshToken(
+      email,
+    );
 
     return new TokenResponse({ accessToken, refreshToken });
-  }
-
-  private async generateRefreshToken(email: string): Promise<string> {
-    return await this.jwtService.signAsync(
-      {
-        email,
-      },
-      {
-        secret: config.get('jwt.refreshSecret'),
-        expiresIn: config.get('jwt.refreshExpiresIn'),
-      },
-    );
-  }
-
-  private async generateAccessToken(email: string): Promise<string> {
-    return await this.jwtService.signAsync({ email });
   }
 }

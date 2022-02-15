@@ -1,6 +1,10 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export class LoginRequest {
+  constructor(payload: LoginRequest) {
+    this.email = payload.email;
+    this.password = payload.password;
+  }
   @IsEmail()
   email: string;
 

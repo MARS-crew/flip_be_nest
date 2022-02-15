@@ -16,7 +16,7 @@ export class UserRepository extends Repository<User> {
 
     const encodedPassword = await BcryptUtils.encode(password);
 
-    const newUser = await User.of({ email, encodedPassword });
+    const newUser = User.of({ email, encodedPassword });
     await this.save(newUser);
 
     return newUser;
