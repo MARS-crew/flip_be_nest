@@ -3,6 +3,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserFactory } from 'test/utils/user.factory';
 import { AuthService } from '../application/auth.service';
+import { User } from '../domain/user.entity';
 import { UserRepository } from '../infrastructure/user.repository';
 import { LoginRequest } from '../interfaces/login.request';
 import { SignUpRequest } from '../interfaces/sign-up.request';
@@ -24,7 +25,7 @@ const mockTokenProvider = {
 describe('AuthService unit test', () => {
   let authService: AuthService;
   let userRepository: UserRepository;
-  let user;
+  let user: User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,7 +46,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 성공', async () => {
     // given
-    const loginRequest = generateLoginRequest({});
+    const loginRequest: LoginRequest = generateLoginRequest({});
 
     const userRepositoryFindOneSpy = jest
       .spyOn(userRepository, 'findOne')
@@ -70,7 +71,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 성공 - refreshToken 저장', async () => {
     // given
-    const loginRequest = generateLoginRequest({});
+    const loginRequest: LoginRequest = generateLoginRequest({});
 
     const userRepositoryFindOneSpy = jest
       .spyOn(userRepository, 'findOne')
@@ -99,7 +100,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 실패 - 존재하지 않는 회원', async () => {
     // given
-    const loginRequest = generateLoginRequest({
+    const loginRequest: LoginRequest = generateLoginRequest({
       email: 'asd@test.com',
       password: '1234',
     });
@@ -126,7 +127,7 @@ describe('AuthService unit test', () => {
 
   it('로그인 실패 - 비밀번호 불일치', async () => {
     // given
-    const loginRequest = generateLoginRequest({
+    const loginRequest: LoginRequest = generateLoginRequest({
       password: 'anotherPassword',
     });
 
@@ -152,7 +153,7 @@ describe('AuthService unit test', () => {
     // given
     const userRepositoryRemoveRefreshTokenSpy = jest
       .spyOn(userRepository, 'removeRefreshToken')
-      .mockReturnThis();
+      .mockResolvedValue();
 
     // when
     await authService.logout(user);
@@ -164,8 +165,23 @@ describe('AuthService unit test', () => {
 
   it('회원가입 성공', async () => {
     // given
+    const signUpRequest: SignUpRequest = generateSignUpRequest({});
+
+    const userRepositoryFindOneSpy = jest
+      .spyOn(userRepository, 'findOne')
+      .mockResolvedValue(undefined);
+
+    const userRepositorySaveSpy = jest
+      .spyOn(userRepository, 'save')
+      .mockResolvedValue(user);
+
     // when
+    await authService.signUp(signUpRequest);
+
     // then
+    expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
+    // first create + refreshtoken = 2 times
+    expect(userRepositorySaveSpy).toHaveBeenCalledTimes(2);
   });
 });
 

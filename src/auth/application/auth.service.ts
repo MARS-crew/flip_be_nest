@@ -1,5 +1,10 @@
+import { BcryptUtils } from '@/common/utils/bcrypt.utils';
 import { TokenProvider } from '@/common/utils/token-provider';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { UserRepository } from '../infrastructure/user.repository';
@@ -16,7 +21,18 @@ export class AuthService {
   ) {}
 
   async signUp(signUpRequest: SignUpRequest): Promise<TokenResponse> {
-    const newUser: User = await this.userRepository.signUp(signUpRequest);
+    const { email, password } = signUpRequest;
+
+    const exists = await this.userRepository.findOne({ email });
+
+    if (exists) {
+      throw new ConflictException('Existing email');
+    }
+
+    const encodedPassword = await BcryptUtils.encode(password);
+
+    const newUser = User.of({ email, encodedPassword });
+    await this.userRepository.save(newUser);
 
     const tokenResponse: TokenResponse = await this.generateUserToken(
       newUser.email,
