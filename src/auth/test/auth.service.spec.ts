@@ -146,11 +146,26 @@ describe('AuthService unit test', () => {
       email: loginRequest.email,
     });
   });
+
+  it('로그아웃 성공', async () => {
+    // given
+    const userRepositoryRemoveRefreshTokenSpy = jest
+      .spyOn(userRepository, 'removeRefreshToken')
+      .mockReturnThis();
+
+    // when
+    await authService.logout(user);
+
+    // then
+
+    expect(userRepositoryRemoveRefreshTokenSpy).toHaveBeenCalledTimes(1);
+    expect(userRepositoryRemoveRefreshTokenSpy).toHaveBeenCalledWith(user);
+  });
 });
 
 const generateLoginRequest = async ({
   email = mockUserInfo.email,
   password = mockUserInfo.password,
 }) => {
-  return new LoginRequest({ email, password });
+  return LoginRequest.of({ email, password });
 };
