@@ -35,9 +35,8 @@ export class WorkbookService {
     user: User,
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<WorkbookDetailResponse>> {
-    const pageInfo = await this.workbookRepository.findAllMostLikesWorkbook(
-      pagingOptions,
-    );
+    const pageInfo: Pagination<Workbook> =
+      await this.workbookRepository.findAllMostLikesWorkbook(pagingOptions);
 
     const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
@@ -53,9 +52,8 @@ export class WorkbookService {
     user: User,
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<WorkbookDetailResponse>> {
-    const pageInfo = await this.workbookRepository.findAllWorkbook(
-      pagingOptions,
-    );
+    const pageInfo: Pagination<Workbook> =
+      await this.workbookRepository.findAllWorkbook(pagingOptions);
 
     const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
@@ -71,9 +69,8 @@ export class WorkbookService {
     user: User,
     workbookId: number,
   ): Promise<WorkbookDetailResponse> {
-    const workbook = await this.workbookRepository.findOneByWorkbookId(
-      workbookId,
-    );
+    const workbook: Workbook =
+      await this.workbookRepository.findOneByWorkbookId(workbookId);
 
     if (!workbook) {
       throw new NotFoundException(

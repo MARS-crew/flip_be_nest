@@ -5,19 +5,6 @@ export class PagingGenerator {
     return { page, limit };
   }
 
-  // static generatePagingInfo(pagingOptions: {
-  //   limit: number;
-  //   page: number;
-  // }): IPaginationMeta {
-  //   return {
-  //     itemCount: pagingOptions.limit,
-  //     totalItems: pagingOptions.limit,
-  //     itemsPerPage: pagingOptions.limit,
-  //     totalPages: pagingOptions.page,
-  //     currentPage: pagingOptions.page,
-  //   };
-  // }
-
   static generatePagingInfo(
     pagingOptions: IPaginationOptions,
   ): IPaginationMeta {

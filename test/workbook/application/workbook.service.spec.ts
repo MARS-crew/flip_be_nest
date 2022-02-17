@@ -66,7 +66,6 @@ describe('WorkbookService', () => {
 
   it('문제집 전체 조회 성공', async () => {
     // given
-
     const pagingOptions: IPaginationOptions =
       PagingGenerator.generatePagingOptions();
 
@@ -95,6 +94,32 @@ describe('WorkbookService', () => {
     expect(workbookRepositoryFindAllWorkbookSpy).toHaveBeenCalledTimes(1);
     expect(workbookRepositoryFindAllWorkbookSpy).toHaveBeenLastCalledWith(
       pagingOptions,
+    );
+  });
+
+  it('문제집 상세 조회 성공', async () => {
+    // given
+    const workbookId = 1;
+    const title = 'test_title';
+    const mockUser = user;
+
+    const mockWorkbook: Workbook = WorkBookFactory.workbook({
+      id: workbookId,
+      title,
+      user: mockUser,
+    });
+
+    const workbookRepositoryFindOneByWorkbookIdSpy = jest
+      .spyOn(workbookRepository, 'findOneByWorkbookId')
+      .mockResolvedValue(mockWorkbook);
+    // when
+
+    await workbookService.findOne(mockUser, workbookId);
+    // then
+
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
+      workbookId,
     );
   });
 });
