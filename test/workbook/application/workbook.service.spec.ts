@@ -184,6 +184,33 @@ describe('WorkbookService', () => {
     expect(workbookRepositorySaveSpy).toHaveBeenCalledTimes(1);
     expect(workbookRepositorySaveSpy).toHaveBeenCalledWith(mockWorkbook);
   });
+
+  it('문제집 수정 실패 - 해당 문제집이 존재하지 않는다.', async () => {
+    // given
+    const workbookId = 1;
+    const updatedTitle = 'updated_title';
+    const mockUser: User = user;
+    const updateWorkbookRequest = generateUpdateWorkbookRequest({
+      title: updatedTitle,
+    });
+
+    const workbookRepositoryFindOneByWorkbookIdSpy = jest
+      .spyOn(workbookRepository, 'findOneByWorkbookId')
+      .mockResolvedValue(undefined);
+
+    // when
+    try {
+      await workbookService.update(mockUser, workbookId, updateWorkbookRequest);
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+    }
+
+    // then
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
+      workbookId,
+    );
+  });
 });
 
 const generateCreateWorkbookRequest = ({ title }): CreateWorkbookRequest => {
