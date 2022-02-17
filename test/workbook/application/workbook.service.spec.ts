@@ -5,7 +5,7 @@ import { WorkbookRepository } from '@/workbook/infrastructure/workbook.repositor
 import { CreateWorkbookRequest } from '@/workbook/interfaces/create-workbook.request';
 import { UpdateWorkbookRequest } from '@/workbook/interfaces/update-workbook.request';
 import { WorkbookResponse } from '@/workbook/interfaces/workbook.response';
-import { NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   IPaginationMeta,
@@ -17,7 +17,14 @@ import { PagingGenerator } from 'test/utils/utils';
 import { WorkBookFactory } from 'test/utils/workbook.factory';
 
 const mockUserInfo = {
+  id: 1,
   email: 'test@test.com',
+  password: '1234',
+};
+
+const mockOtherUserInfo = {
+  id: 2,
+  email: 'test2@test.com',
   password: '1234',
 };
 
@@ -25,6 +32,7 @@ describe('WorkbookService', () => {
   let workbookService: WorkbookService;
   let workbookRepository: WorkbookRepository;
   let user: User;
+  let otherUser: User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,7 +41,9 @@ describe('WorkbookService', () => {
 
     workbookService = module.get<WorkbookService>(WorkbookService);
     workbookRepository = module.get<WorkbookRepository>(WorkbookRepository);
+
     user = await UserFactory.user({ ...mockUserInfo });
+    otherUser = await UserFactory.user({ ...mockOtherUserInfo });
   });
 
   it('문제집을 생성하고, 생성된 문제집을 반환한다.', async () => {
@@ -203,6 +213,41 @@ describe('WorkbookService', () => {
       await workbookService.update(mockUser, workbookId, updateWorkbookRequest);
     } catch (error) {
       expect(error).toBeInstanceOf(NotFoundException);
+    }
+
+    // then
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
+      workbookId,
+    );
+  });
+
+  it('문제집 수정 실패 - 해당 문제집을 수정할 권한이 없다.', async () => {
+    // given
+    const workbookId = 1;
+    const title = 'title';
+    const updatedTitle = 'updated_title';
+    const mockUser: User = user;
+    const mockOtherUser: User = otherUser;
+    const updateWorkbookRequest = generateUpdateWorkbookRequest({
+      title: updatedTitle,
+    });
+
+    const mockWorkbook: Workbook = WorkBookFactory.workbook({
+      id: workbookId,
+      title,
+      user: mockOtherUser,
+    });
+
+    const workbookRepositoryFindOneByWorkbookIdSpy = jest
+      .spyOn(workbookRepository, 'findOneByWorkbookId')
+      .mockResolvedValue(mockWorkbook);
+
+    // when
+    try {
+      await workbookService.update(mockUser, workbookId, updateWorkbookRequest);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ForbiddenException);
     }
 
     // then
