@@ -3,6 +3,7 @@ import { WorkbookService } from '@/workbook/application/workbook.service';
 import { Workbook } from '@/workbook/domain/workbook.entity';
 import { WorkbookRepository } from '@/workbook/infrastructure/workbook.repository';
 import { CreateWorkbookRequest } from '@/workbook/interfaces/create-workbook.request';
+import { UpdateWorkbookRequest } from '@/workbook/interfaces/update-workbook.request';
 import { WorkbookResponse } from '@/workbook/interfaces/workbook.response';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -145,6 +146,44 @@ describe('WorkbookService', () => {
       workbookId,
     );
   });
+
+  it('문제집 수정 성공 - 수정 요청한 title과 수정된 title 일치해야 한다.', async () => {
+    // given
+    const workbookId = 1;
+    const title = 'test_title';
+    const updatedTitle = 'updated_title';
+    const mockUser: User = user;
+    const updateWorkbookRequest = generateUpdateWorkbookRequest({
+      title: updatedTitle,
+    });
+
+    const mockWorkbook: Workbook = WorkBookFactory.workbook({
+      id: workbookId,
+      title,
+      user: mockUser,
+    });
+
+    const workbookRepositoryFindOneByWorkbookIdSpy = jest
+      .spyOn(workbookRepository, 'findOneByWorkbookId')
+      .mockResolvedValue(mockWorkbook);
+
+    const workbookRepositorySaveSpy = jest
+      .spyOn(workbookRepository, 'save')
+      .mockResolvedValue(mockWorkbook);
+
+    // when
+    await workbookService.update(mockUser, workbookId, updateWorkbookRequest);
+
+    // then
+    expect(mockWorkbook.title).toEqual(updatedTitle);
+
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
+      workbookId,
+    );
+    expect(workbookRepositorySaveSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositorySaveSpy).toHaveBeenCalledWith(mockWorkbook);
+  });
 });
 
 const generateCreateWorkbookRequest = ({ title }): CreateWorkbookRequest => {
@@ -152,4 +191,11 @@ const generateCreateWorkbookRequest = ({ title }): CreateWorkbookRequest => {
   createWorkbookRequest.title = title;
 
   return createWorkbookRequest;
+};
+
+const generateUpdateWorkbookRequest = ({ title }): UpdateWorkbookRequest => {
+  const updateWorkbookRequest = new UpdateWorkbookRequest();
+  updateWorkbookRequest.title = title;
+
+  return updateWorkbookRequest;
 };

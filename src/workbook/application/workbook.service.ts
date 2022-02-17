@@ -98,7 +98,9 @@ export class WorkbookService {
 
     workbook.updateInfo({ title: updateWorkbookRequest.title });
 
-    const savedWorkbook = await workbook.save();
+    const savedWorkbook: Workbook = await this.workbookRepository.save(
+      workbook,
+    );
 
     return new WorkbookResponse(savedWorkbook);
   }
