@@ -5,7 +5,13 @@ import { WorkbookRepository } from '@/workbook/infrastructure/workbook.repositor
 import { CreateWorkbookRequest } from '@/workbook/interfaces/create-workbook.request';
 import { WorkbookResponse } from '@/workbook/interfaces/workbook.response';
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  IPaginationMeta,
+  IPaginationOptions,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { UserFactory } from 'test/utils/user.factory';
+import { PagingGenerator } from 'test/utils/utils';
 import { WorkBookFactory } from 'test/utils/workbook.factory';
 
 const mockUserInfo = {
@@ -32,7 +38,7 @@ describe('WorkbookService', () => {
     // given
     const title = 'test_title';
     const workbookId = 1;
-    const mockUser = user;
+    const mockUser: User = user;
 
     const createWorkbookRequest: CreateWorkbookRequest =
       generateCreateWorkbookRequest({ title });
@@ -56,6 +62,40 @@ describe('WorkbookService', () => {
       createWorkbookRequest,
     );
     expect(result).toEqual(new WorkbookResponse(mockWorkbook));
+  });
+
+  it('문제집 전체 조회 성공', async () => {
+    // given
+
+    const pagingOptions: IPaginationOptions =
+      PagingGenerator.generatePagingOptions();
+
+    const mockUser: User = user;
+    const mockWorkbooks: Workbook[] = WorkBookFactory.workbookList({
+      count: pagingOptions.limit,
+      user: mockUser,
+    });
+
+    const mockPagingInfo: IPaginationMeta =
+      PagingGenerator.generatePagingInfo(pagingOptions);
+
+    const mockWorkbookPagination: Pagination<Workbook> = {
+      items: mockWorkbooks,
+      meta: mockPagingInfo,
+    };
+
+    const workbookRepositoryFindAllWorkbookSpy = jest
+      .spyOn(workbookRepository, 'findAllWorkbook')
+      .mockResolvedValue(mockWorkbookPagination);
+
+    // when
+    await workbookService.findAll(mockUser, pagingOptions);
+
+    // then
+    expect(workbookRepositoryFindAllWorkbookSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositoryFindAllWorkbookSpy).toHaveBeenLastCalledWith(
+      pagingOptions,
+    );
   });
 });
 
