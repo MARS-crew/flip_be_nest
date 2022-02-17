@@ -1,14 +1,22 @@
 import { User } from '@/auth/domain/user.entity';
+import { WorkbookService } from '@/workbook/application/workbook.service';
+import { Workbook } from '@/workbook/domain/workbook.entity';
+import { WorkbookRepository } from '@/workbook/infrastructure/workbook.repository';
+import { CreateWorkbookRequest } from '@/workbook/interfaces/create-workbook.request';
+import { WorkbookResponse } from '@/workbook/interfaces/workbook.response';
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkbookService } from '../../../src/workbook/application/workbook.service';
-import { Workbook } from '../../../src/workbook/domain/workbook.entity';
-import { WorkbookRepository } from '../../../src/workbook/infrastructure/workbook.repository';
-import { CreateWorkbookRequest } from '../../../src/workbook/interfaces/create-workbook.request';
-import { WorkbookResponse } from '../../../src/workbook/interfaces/workbook.response';
+import { UserFactory } from 'test/utils/user.factory';
+import { WorkBookFactory } from 'test/utils/workbook.factory';
+
+const mockUserInfo = {
+  email: 'test@test.com',
+  password: '1234',
+};
 
 describe('WorkbookService', () => {
   let workbookService: WorkbookService;
   let workbookRepository: WorkbookRepository;
+  let user: User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,41 +25,43 @@ describe('WorkbookService', () => {
 
     workbookService = module.get<WorkbookService>(WorkbookService);
     workbookRepository = module.get<WorkbookRepository>(WorkbookRepository);
+    user = await UserFactory.user({ ...mockUserInfo });
   });
 
-  describe('create()', () => {
-    it('문제집을 생성하고, 생성된 문제집을 반환한다.', async () => {
-      // given
-      const user: User = new User();
-      user.id = 1;
-      user.email = 'mokhs00@naver.com';
-      user.password = '1234';
+  it('문제집을 생성하고, 생성된 문제집을 반환한다.', async () => {
+    // given
+    const title = 'test_title';
+    const workbookId = 1;
+    const mockUser = user;
 
-      const createWorkbookRequest: CreateWorkbookRequest = {
-        title: 'test_title',
-      };
+    const createWorkbookRequest: CreateWorkbookRequest =
+      generateCreateWorkbookRequest({ title });
 
-      const savedWorkbook: Workbook = new Workbook();
-
-      savedWorkbook.id = 1;
-      savedWorkbook.title = createWorkbookRequest.title;
-      savedWorkbook.user = user;
-      savedWorkbook.createdAt = new Date();
-      savedWorkbook.updatedAt = new Date();
-
-      const workbookRepositorySpy = jest
-        .spyOn(workbookRepository, 'createWorkbook')
-        .mockResolvedValue(savedWorkbook);
-
-      // when
-      const result = await workbookService.create(user, createWorkbookRequest);
-
-      // then
-      expect(workbookRepositorySpy).toHaveBeenCalledWith(
-        user,
-        createWorkbookRequest,
-      );
-      expect(result).toEqual(new WorkbookResponse(savedWorkbook));
+    const mockWorkbook: Workbook = WorkBookFactory.workbook({
+      id: workbookId,
+      title,
+      user: mockUser,
     });
+
+    const workbookRepositorycreateWorkbookSpy = jest
+      .spyOn(workbookRepository, 'createWorkbook')
+      .mockResolvedValue(mockWorkbook);
+
+    // when
+    const result = await workbookService.create(user, createWorkbookRequest);
+
+    // then
+    expect(workbookRepositorycreateWorkbookSpy).toHaveBeenCalledWith(
+      user,
+      createWorkbookRequest,
+    );
+    expect(result).toEqual(new WorkbookResponse(mockWorkbook));
   });
 });
+
+const generateCreateWorkbookRequest = ({ title }): CreateWorkbookRequest => {
+  const createWorkbookRequest = new CreateWorkbookRequest();
+  createWorkbookRequest.title = title;
+
+  return createWorkbookRequest;
+};
