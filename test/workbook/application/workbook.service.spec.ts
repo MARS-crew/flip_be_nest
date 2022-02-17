@@ -4,6 +4,7 @@ import { Workbook } from '@/workbook/domain/workbook.entity';
 import { WorkbookRepository } from '@/workbook/infrastructure/workbook.repository';
 import { CreateWorkbookRequest } from '@/workbook/interfaces/create-workbook.request';
 import { WorkbookResponse } from '@/workbook/interfaces/workbook.response';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   IPaginationMeta,
@@ -117,6 +118,28 @@ describe('WorkbookService', () => {
     await workbookService.findOne(mockUser, workbookId);
     // then
 
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
+      workbookId,
+    );
+  });
+  it('문제집 상세 조회 실패 - 존재하지 않는 문제집', async () => {
+    // given
+    const workbookId = 1;
+    const mockUser: User = user;
+
+    const workbookRepositoryFindOneByWorkbookIdSpy = jest
+      .spyOn(workbookRepository, 'findOneByWorkbookId')
+      .mockResolvedValue(undefined);
+
+    // when
+    try {
+      await workbookService.findOne(mockUser, workbookId);
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+    }
+
+    // then
     expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledTimes(1);
     expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
       workbookId,
