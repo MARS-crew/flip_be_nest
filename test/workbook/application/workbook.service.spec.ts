@@ -305,6 +305,41 @@ describe('WorkbookService', () => {
       user: { id: mockUser.id },
     });
   });
+
+  it('내 문제집 전체 조회 성공', async () => {
+    // given
+    const pagingOptions: IPaginationOptions =
+      PagingGenerator.generatePagingOptions();
+
+    const mockUser: User = user;
+    const mockWorkbooks: Workbook[] = WorkBookFactory.workbookList({
+      count: pagingOptions.limit,
+      user: mockUser,
+    });
+
+    const mockPagingInfo: IPaginationMeta =
+      PagingGenerator.generatePagingInfo(pagingOptions);
+
+    const mockWorkbookPagination: Pagination<Workbook> = {
+      items: mockWorkbooks,
+      meta: mockPagingInfo,
+    };
+
+    const workbookRepositoryFindAllWorkbookByUserIdSpy = jest
+      .spyOn(workbookRepository, 'findAllWorkbookByUserId')
+      .mockResolvedValue(mockWorkbookPagination);
+
+    // when
+    await workbookService.me(mockUser, pagingOptions);
+
+    // then
+    expect(workbookRepositoryFindAllWorkbookByUserIdSpy).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(
+      workbookRepositoryFindAllWorkbookByUserIdSpy,
+    ).toHaveBeenLastCalledWith(mockUser.id, pagingOptions);
+  });
 });
 
 const generateCreateWorkbookRequest = ({ title }): CreateWorkbookRequest => {
