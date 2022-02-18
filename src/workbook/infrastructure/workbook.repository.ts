@@ -38,14 +38,7 @@ export class WorkbookRepository extends Repository<Workbook> {
     const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
 
     const idList = pageInfo.items.map((workbook) => workbook.id);
-
-    const result = await this.createQueryBuilder('workbook')
-      .whereInIds(idList)
-      .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
-      .orderBy('workbook.createdAt', 'DESC')
-      .leftJoinAndSelect('workbook.cards', 'workbookCard')
-      .leftJoinAndSelect('workbook.likes', 'workbookLike')
-      .getMany();
+    const result = await this.findAllworkbookByIdList(idList);
 
     return { ...pageInfo, items: result };
   }
@@ -68,14 +61,7 @@ export class WorkbookRepository extends Repository<Workbook> {
     const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
 
     const idList = pageInfo.items.map((workbook) => workbook.id);
-
-    const result = await this.createQueryBuilder('workbook')
-      .whereInIds(idList)
-      .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
-      .orderBy('workbook.createdAt', 'DESC')
-      .leftJoinAndSelect('workbook.cards', 'workbookCard')
-      .leftJoinAndSelect('workbook.likes', 'workbookLike')
-      .getMany();
+    const result = await this.findAllworkbookByIdList(idList);
 
     return { ...pageInfo, items: result };
   }
@@ -98,21 +84,20 @@ export class WorkbookRepository extends Repository<Workbook> {
     const pageInfo = await paginate<Workbook>(queryBuilder, pagingOptions);
 
     const idList = pageInfo.items.map((workbook) => workbook.id);
+    const result = await this.findAllworkbookByIdList(idList);
 
-    const result = await this.createQueryBuilder('workbook')
+    const items = result.sort((a, b) => b.likes.length - a.likes.length);
+
+    return { ...pageInfo, items };
+  }
+
+  async findAllworkbookByIdList(idList: number[]): Promise<Workbook[]> {
+    return await this.createQueryBuilder('workbook')
       .whereInIds(idList)
       .innerJoinAndSelect('workbook.user', 'user', 'workbook.user_id = user.id')
       .orderBy('workbook.createdAt', 'DESC')
       .leftJoinAndSelect('workbook.cards', 'workbookCard')
       .leftJoinAndSelect('workbook.likes', 'workbookLike')
       .getMany();
-
-    const items = result
-      .filter((item) => item.likes?.length)
-      .sort((a, b) => b.likes.length - a.likes.length);
-
-    console.log(items.length);
-
-    return { ...pageInfo, items };
   }
 }

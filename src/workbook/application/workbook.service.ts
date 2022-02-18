@@ -1,7 +1,12 @@
 import { User } from '@/auth/domain/user.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { DeleteResult } from 'typeorm';
 import { WorkbookCard } from '../domain/workbook-card.entity';
 import { WorkbookLike, WorkbookLikeType } from '../domain/workbook-like.entity';
 import { Workbook } from '../domain/workbook.entity';
@@ -35,9 +40,8 @@ export class WorkbookService {
     user: User,
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<WorkbookDetailResponse>> {
-    const pageInfo = await this.workbookRepository.findAllMostLikesWorkbook(
-      pagingOptions,
-    );
+    const pageInfo: Pagination<Workbook> =
+      await this.workbookRepository.findAllMostLikesWorkbook(pagingOptions);
 
     const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
@@ -53,9 +57,8 @@ export class WorkbookService {
     user: User,
     pagingOptions: IPaginationOptions,
   ): Promise<Pagination<WorkbookDetailResponse>> {
-    const pageInfo = await this.workbookRepository.findAllWorkbook(
-      pagingOptions,
-    );
+    const pageInfo: Pagination<Workbook> =
+      await this.workbookRepository.findAllWorkbook(pagingOptions);
 
     const response: Pagination<WorkbookDetailResponse> = {
       ...pageInfo,
@@ -71,9 +74,8 @@ export class WorkbookService {
     user: User,
     workbookId: number,
   ): Promise<WorkbookDetailResponse> {
-    const workbook = await this.workbookRepository.findOneByWorkbookId(
-      workbookId,
-    );
+    const workbook: Workbook =
+      await this.workbookRepository.findOneByWorkbookId(workbookId);
 
     if (!workbook) {
       throw new NotFoundException(
@@ -89,25 +91,32 @@ export class WorkbookService {
     workbookId: number,
     updateWorkbookRequest: UpdateWorkbookRequest,
   ): Promise<WorkbookResponse> {
-    const workbook = await this.workbookRepository.findOneByWorkbookId(
-      workbookId,
-    );
+    const workbook: Workbook =
+      await this.workbookRepository.findOneByWorkbookId(workbookId);
 
-    if (!workbook || workbook.user.id !== user.id) {
+    if (!workbook) {
       throw new NotFoundException(
         `해당 문제집을 찾을 수 없습니다. with id : ${workbookId}`,
       );
     }
 
+    if (!workbook.checkUser(user.id)) {
+      throw new ForbiddenException(
+        `해당 문제집을 수정할 권한이 없습니다. with id : ${workbookId}`,
+      );
+    }
+
     workbook.updateInfo({ title: updateWorkbookRequest.title });
 
-    const savedWorkbook = await workbook.save();
+    const savedWorkbook: Workbook = await this.workbookRepository.save(
+      workbook,
+    );
 
     return new WorkbookResponse(savedWorkbook);
   }
 
   async delete(user: User, workbookId: number): Promise<void> {
-    const result = await this.workbookRepository.delete({
+    const result: DeleteResult = await this.workbookRepository.delete({
       id: workbookId,
       user: { id: user.id },
     });
@@ -241,7 +250,7 @@ export class WorkbookService {
     });
 
     if (!workbookLike) {
-      const newWorkbookLike = await WorkbookLike.of(type, user.id, workbook);
+      const newWorkbookLike = WorkbookLike.of(type, user.id, workbook);
       newWorkbookLike.save();
       return;
     }
