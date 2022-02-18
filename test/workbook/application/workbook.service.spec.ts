@@ -279,6 +279,32 @@ describe('WorkbookService', () => {
       user: { id: mockUser.id },
     });
   });
+
+  it('문제집 삭제 실패 - user, workbookId와 일치하는 문제집을 찾을 수 없음', async () => {
+    // given
+    const workbookId = 1;
+    const mockUser: User = user;
+
+    const mockDeleteResult: DeleteResult = { raw: [], affected: 0 };
+
+    const workbookRepositorydeleteSpy = jest
+      .spyOn(workbookRepository, 'delete')
+      .mockResolvedValue(mockDeleteResult);
+
+    // when
+    try {
+      await workbookService.delete(mockUser, workbookId);
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+    }
+
+    // then
+    expect(workbookRepositorydeleteSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositorydeleteSpy).toHaveBeenCalledWith({
+      id: workbookId,
+      user: { id: mockUser.id },
+    });
+  });
 });
 
 const generateCreateWorkbookRequest = ({ title }): CreateWorkbookRequest => {
