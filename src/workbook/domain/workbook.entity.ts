@@ -31,11 +31,15 @@ export class Workbook extends BaseTimeEntity {
   @OneToMany(() => WorkbookCard, (card) => card.workbook, { cascade: true })
   cards: WorkbookCard[];
 
-  updateInfo({ title }) {
+  updateInfo({ title }): void {
     this.title = title;
   }
 
-  addCard(card: WorkbookCard) {
+  addCard(card: WorkbookCard): void {
     this.cards.push(card);
+  }
+
+  checkUser(userId: number): boolean {
+    return this.user.id === userId;
   }
 }

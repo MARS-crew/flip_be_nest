@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { DeleteResult } from 'typeorm';
 import { WorkbookCard } from '../domain/workbook-card.entity';
 import { WorkbookLike, WorkbookLikeType } from '../domain/workbook-like.entity';
 import { Workbook } from '../domain/workbook.entity';
@@ -90,9 +91,8 @@ export class WorkbookService {
     workbookId: number,
     updateWorkbookRequest: UpdateWorkbookRequest,
   ): Promise<WorkbookResponse> {
-    const workbook = await this.workbookRepository.findOneByWorkbookId(
-      workbookId,
-    );
+    const workbook: Workbook =
+      await this.workbookRepository.findOneByWorkbookId(workbookId);
 
     if (!workbook) {
       throw new NotFoundException(
@@ -100,7 +100,7 @@ export class WorkbookService {
       );
     }
 
-    if (workbook.user.id !== user.id) {
+    if (!workbook.checkUser(user.id)) {
       throw new ForbiddenException(
         `해당 문제집을 수정할 권한이 없습니다. with id : ${workbookId}`,
       );
@@ -116,7 +116,7 @@ export class WorkbookService {
   }
 
   async delete(user: User, workbookId: number): Promise<void> {
-    const result = await this.workbookRepository.delete({
+    const result: DeleteResult = await this.workbookRepository.delete({
       id: workbookId,
       user: { id: user.id },
     });

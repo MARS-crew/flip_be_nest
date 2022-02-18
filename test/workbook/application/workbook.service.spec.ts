@@ -15,6 +15,7 @@ import {
 import { UserFactory } from 'test/utils/user.factory';
 import { PagingGenerator } from 'test/utils/utils';
 import { WorkBookFactory } from 'test/utils/workbook.factory';
+import { DeleteResult } from 'typeorm';
 
 const mockUserInfo = {
   id: 1,
@@ -255,6 +256,28 @@ describe('WorkbookService', () => {
     expect(workbookRepositoryFindOneByWorkbookIdSpy).toHaveBeenCalledWith(
       workbookId,
     );
+  });
+
+  it('문제집 삭제 성공', async () => {
+    // given
+    const workbookId = 1;
+    const mockUser: User = user;
+
+    const mockDeleteResult: DeleteResult = { raw: [], affected: 1 };
+
+    const workbookRepositorydeleteSpy = jest
+      .spyOn(workbookRepository, 'delete')
+      .mockResolvedValue(mockDeleteResult);
+
+    // when
+    await workbookService.delete(mockUser, workbookId);
+
+    // then
+    expect(workbookRepositorydeleteSpy).toHaveBeenCalledTimes(1);
+    expect(workbookRepositorydeleteSpy).toHaveBeenCalledWith({
+      id: workbookId,
+      user: { id: mockUser.id },
+    });
   });
 });
 
