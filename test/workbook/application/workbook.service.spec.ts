@@ -222,7 +222,7 @@ describe('WorkbookService', () => {
     );
   });
 
-  it('문제집 수정 실패 - 해당 문제집을 수정할 권한이 없다.', async () => {
+  it('문제집 수정 실패 - 내가 아닌 다른 유저의 문제집을 수정할 권한이 없다.', async () => {
     // given
     const workbookId = 1;
     const title = 'title';
