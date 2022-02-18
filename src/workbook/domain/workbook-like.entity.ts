@@ -23,11 +23,11 @@ export class WorkbookLike extends BaseTimeEntity {
   })
   workbook: Workbook;
 
-  static async of(
+  static of(
     type: WorkbookLikeType,
     userId: number,
     workbook: Workbook,
-  ): Promise<WorkbookLike> {
+  ): WorkbookLike {
     const workbookLike = new WorkbookLike();
     workbookLike.type = type;
     workbookLike.userId = userId;

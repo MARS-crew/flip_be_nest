@@ -250,7 +250,7 @@ export class WorkbookService {
     });
 
     if (!workbookLike) {
-      const newWorkbookLike = await WorkbookLike.of(type, user.id, workbook);
+      const newWorkbookLike = WorkbookLike.of(type, user.id, workbook);
       newWorkbookLike.save();
       return;
     }
