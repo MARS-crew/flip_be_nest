@@ -1,15 +1,20 @@
-import { Logger } from '@nestjs/common';
+import { Logger, NestApplicationOptions } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as config from 'config';
 import { AppModule } from './app.module';
+import { LoggerConfig } from './common/config/logger-config';
+
+const logger = new Logger('INFO');
+const serverConfig: { port: string } = config.get('server');
 
 async function bootstrap() {
-  const logger = new Logger('INFO');
-  const app = await NestFactory.create(AppModule);
+  const appOptions: NestApplicationOptions = {
+    cors: true,
+    logger: LoggerConfig.createApplicationLogger({ env: process.env.NODE_ENV }),
+  };
 
-  app.enableCors();
+  const app = await NestFactory.create(AppModule, appOptions);
 
-  const serverConfig: { port: string } = config.get('server');
   const port = serverConfig.port || 3000;
 
   await app.listen(port);
