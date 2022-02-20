@@ -1,10 +1,9 @@
-import * as moment from 'moment';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
 import { format, Logform, transports } from 'winston';
-
+import 'winston-daily-rotate-file';
 export class LoggerConfig {
   static createApplicationLogger({ env = 'development' }) {
     return WinstonModule.createLogger({
@@ -14,26 +13,30 @@ export class LoggerConfig {
       ),
       transports: [
         new transports.Console({}),
-        new transports.File({
-          level: 'error',
-          filename: `error-${moment(new Date()).format('YYYY-MM-DD')}.log`,
+        new transports.DailyRotateFile({
+          filename: 'application-%DATE%.log',
           dirname: 'logs',
-          maxsize: 5000000,
+          datePattern: 'YYYY-MM-DD-HH',
           format:
             env === 'production'
               ? this.productionLogFileFormat()
               : this.developmentLogFileFormat(),
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
         }),
-        new transports.File({
-          filename: `application-${moment(new Date()).format(
-            'YYYY-MM-DD',
-          )}.log`,
+        new transports.DailyRotateFile({
+          level: 'error',
+          filename: 'error-%DATE%.log',
           dirname: 'logs',
-          maxsize: 5000000,
+          datePattern: 'YYYY-MM-DD-HH',
           format:
             env === 'production'
               ? this.productionLogFileFormat()
               : this.developmentLogFileFormat(),
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
         }),
       ],
     });
