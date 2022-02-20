@@ -10,7 +10,7 @@ const serverConfig: { port: string } = config.get('server');
 async function bootstrap() {
   const appOptions: NestApplicationOptions = {
     cors: true,
-    logger: LoggerConfig.createApplicationLogger({ env: process.env.NODE_ENV }),
+    logger: LoggerConfig.createApplicationLoggerService(),
   };
 
   const app = await NestFactory.create(AppModule, appOptions);

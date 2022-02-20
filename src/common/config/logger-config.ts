@@ -1,55 +1,56 @@
+import { LoggerService } from '@nestjs/common';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
-import { format, Logform, transports } from 'winston';
+import { format, Logform, transport, transports } from 'winston';
 import 'winston-daily-rotate-file';
+
 export class LoggerConfig {
-  static createApplicationLogger({ env = 'development' }) {
+  public static createApplicationLoggerService(): LoggerService {
     return WinstonModule.createLogger({
       format: format.combine(
         format.timestamp(),
         nestWinstonModuleUtilities.format.nestLike('FLIP'),
       ),
-      transports: [
-        new transports.Console({}),
-        new transports.DailyRotateFile({
-          filename: 'application-%DATE%.log',
-          dirname: 'logs',
-          datePattern: 'YYYY-MM-DD-HH',
-          format:
-            env === 'production'
-              ? this.productionLogFileFormat()
-              : this.developmentLogFileFormat(),
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '14d',
-        }),
-        new transports.DailyRotateFile({
-          level: 'error',
-          filename: 'error-%DATE%.log',
-          dirname: 'logs',
-          datePattern: 'YYYY-MM-DD-HH',
-          format:
-            env === 'production'
-              ? this.productionLogFileFormat()
-              : this.developmentLogFileFormat(),
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '14d',
-        }),
-      ],
+      transports: this.transports(),
     });
   }
 
-  static productionLogFileFormat(): Logform.Format {
-    return format.combine(
-      format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      format.printf((info) => JSON.stringify(info)),
-    );
+  private static transports(): transport[] {
+    return [
+      new transports.Console({}),
+      new transports.DailyRotateFile({
+        ...this.logDefaultConfig(),
+        format: this.logFileFormat(),
+        filename: 'application-%DATE%.log',
+      }),
+      new transports.DailyRotateFile({
+        ...this.logDefaultConfig(),
+        format: this.logFileFormat(),
+        level: 'error',
+        filename: 'error-%DATE%.log',
+      }),
+    ];
   }
 
-  static developmentLogFileFormat(): Logform.Format {
+  private static logDefaultConfig(): {
+    dirname: string;
+    datePattern: string;
+    zippedArchive: boolean;
+    maxSize: string;
+    maxFiles: string;
+  } {
+    return {
+      dirname: 'logs',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d',
+    };
+  }
+
+  private static logFileFormat(): Logform.Format {
     return format.combine(
       format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       format.printf((info) => JSON.stringify(info)),
