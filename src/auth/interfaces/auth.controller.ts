@@ -22,7 +22,6 @@ import { TokenResponse } from './token.response';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @HttpCode(HttpStatus.CREATED)
   @Post('/signup')
   async signUp(
     @Body(ValidationPipe) signUpRequest: SignUpRequest,
@@ -30,6 +29,7 @@ export class AuthController {
     const response: TokenResponse = await this.authService.signUp(
       signUpRequest,
     );
+
     return ApiResponse.of({
       data: response,
       message: 'success signup',
@@ -37,17 +37,20 @@ export class AuthController {
     });
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('/login')
   async login(
     @Body(ValidationPipe) loginRequest: LoginRequest,
   ): Promise<ApiResponse<TokenResponse>> {
     const response: TokenResponse = await this.authService.login(loginRequest);
+
     return ApiResponse.of({
       data: response,
       message: 'success login',
     });
   }
 
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtRefreshGuard)
   @Post('/token/refresh')
   async refreshToken(
@@ -58,16 +61,19 @@ export class AuthController {
       user,
       refreshTokenRequest,
     );
+
     return ApiResponse.of({
       data: response,
       message: 'success refresh token',
     });
   }
 
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard())
   @Post('/logout')
   async logout(@GetUser() user: User): Promise<ApiResponse<void>> {
     await this.authService.logout(user);
+
     return ApiResponse.of({
       message: 'success logout',
     });

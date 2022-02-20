@@ -4,7 +4,7 @@ import * as config from 'config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const logger = new Logger();
+  const logger = new Logger('INFO');
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
