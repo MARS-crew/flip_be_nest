@@ -1,0 +1,13 @@
+FROM node:16-alpine
+
+WORKDIR /app
+
+COPY ./ ./
+
+RUN npm ci
+RUN npm run build
+RUN npm install -g pm2
+
+ENV NODE_ENV=production
+
+ENTRYPOINT ["pm2", "start" ,"ecosystem.config.js"]

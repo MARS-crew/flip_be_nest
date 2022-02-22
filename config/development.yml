@@ -1,9 +1,9 @@
 db:
-  type: mariadb
-  host: mars-flip-mariadb-dev.crushi2l5fpc.ap-northeast-2.rds.amazonaws.com
+  type: mysql
+  host: 54.180.93.35
   port: 3306
   username: mars_flip
-  password: mars00--
+  password: mars_flip12!@
   database: mars_flip
   synchronize: true
 
