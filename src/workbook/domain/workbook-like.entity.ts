@@ -12,7 +12,7 @@ export class WorkbookLike extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum', enum: WorkbookLikeType })
+  @Column({ type: 'simple-enum', enum: WorkbookLikeType })
   type: WorkbookLikeType;
 
   @Column()

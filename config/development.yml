@@ -1,10 +1,6 @@
 db:
-  type: mysql
-  host: 54.180.93.35
-  port: 3306
-  username: mars_flip
-  password: mars_flip12!@
-  database: mars_flip
+  type: sqlite
+  database: database.db
   synchronize: true
 
 jwt:
