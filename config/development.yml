@@ -1,11 +1,8 @@
 db:
-  type: postgres
-  host: database-2-instance-1.crushi2l5fpc.ap-northeast-2.rds.amazonaws.com
-  port: 5432
-  username: postgres
-  password: mars00--
-  database: mars_flip
+  type: sqlite
+  database: database.db
   synchronize: true
 
 jwt:
   secret: mars-flip-secret-key-dev-mars-flip-secret-key-dev-mars-flip-secret-key-dev
+  refreshSecret: refresh-mars-flip-secret-key-dev-refresh-mars-flip-secret-key-dev-refresh-mars-flip-secret-key-dev
