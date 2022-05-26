@@ -1,10 +1,10 @@
 db:
-  type: postgres
-  host: database-2-instance-1.crushi2l5fpc.ap-northeast-2.rds.amazonaws.com
-  port: 5432
-  username: postgres
-  password: mars00--
-  database: mars_flip
+  type: mysql
+  host: localhost
+  port: 3306
+  username: root
+  password: 0118
+  database: flip
   synchronize: true
 
 jwt:
