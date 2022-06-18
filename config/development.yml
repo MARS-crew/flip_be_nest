@@ -1,6 +1,15 @@
 db:
+<<<<<<< HEAD
   type: sqlite
   database: database.db
+=======
+  type: mysql
+  host: localhost
+  port: 3306
+  username: root
+  password: 0118
+  database: flip
+>>>>>>> 0d582baafc758ee2e98c0cd5b1801c986775317c
   synchronize: true
 
 jwt:

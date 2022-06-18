@@ -18,7 +18,7 @@ export class Workbook extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User)
+  @ManyToOne((type) => User, { onDelete: 'CASCADE' })
   user: User;
 
   @OneToMany((type) => WorkbookCard, (card) => card.workbook, { cascade: true })
